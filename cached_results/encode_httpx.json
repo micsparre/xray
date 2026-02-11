@@ -1,0 +1,2518 @@
+{
+  "repo_url": "https://github.com/encode/httpx",
+  "repo_name": "encode/httpx",
+  "analysis_months": 6,
+  "total_commits": 12,
+  "total_contributors": 10,
+  "total_prs": 50,
+  "contributors": [
+    {
+      "name": "dependabot[bot]",
+      "email": "49699333+dependabot[bot]@users.noreply.github.com",
+      "total_commits": 2,
+      "total_additions": 12,
+      "total_deletions": 12,
+      "modules": [
+        ".github/workflows",
+        "pyproject.toml",
+        "requirements.txt"
+      ],
+      "first_commit": "2025-09-04T15:29:43+01:00",
+      "last_commit": "2025-10-04T18:38:23+01:00"
+    },
+    {
+      "name": "Christian Clauss",
+      "email": "cclauss@me.com",
+      "total_commits": 2,
+      "total_additions": 18,
+      "total_deletions": 20,
+      "modules": [
+        "requirements.txt",
+        "tests/client",
+        "httpx/_exceptions.py",
+        "httpx/_urls.py",
+        "tests/test_content.py"
+      ],
+      "first_commit": "2025-09-03T13:17:26+02:00",
+      "last_commit": "2025-09-04T15:48:49+02:00"
+    },
+    {
+      "name": "Josh Cannon",
+      "email": "joshdcannon@gmail.com",
+      "total_commits": 1,
+      "total_additions": 6,
+      "total_deletions": 1,
+      "modules": [
+        "CHANGELOG.md",
+        "httpx/__init__.py",
+        "httpx/_auth.py"
+      ],
+      "first_commit": "2025-12-10T08:58:48-06:00",
+      "last_commit": "2025-12-10T08:58:48-06:00"
+    },
+    {
+      "name": "Riccardo Magliocchetti",
+      "email": "riccardo.magliocchetti@gmail.com",
+      "total_commits": 1,
+      "total_additions": 1,
+      "total_deletions": 1,
+      "modules": [
+        "docs/advanced"
+      ],
+      "first_commit": "2025-12-10T15:47:31+01:00",
+      "last_commit": "2025-12-10T15:47:31+01:00"
+    },
+    {
+      "name": "ZProger",
+      "email": "81753080+Zproger@users.noreply.github.com",
+      "total_commits": 1,
+      "total_additions": 1,
+      "total_deletions": 1,
+      "modules": [
+        "docs/quickstart.md"
+      ],
+      "first_commit": "2025-10-16T11:04:38+02:00",
+      "last_commit": "2025-10-16T11:04:38+02:00"
+    },
+    {
+      "name": "Kim Christie",
+      "email": "tom@tomchristie.com",
+      "total_commits": 1,
+      "total_additions": 1,
+      "total_deletions": 1,
+      "modules": [
+        "requirements.txt"
+      ],
+      "first_commit": "2025-09-16T14:23:31+01:00",
+      "last_commit": "2025-09-16T14:23:31+01:00"
+    },
+    {
+      "name": "Tobias Fischer",
+      "email": "30701667+tobb10001@users.noreply.github.com",
+      "total_commits": 1,
+      "total_additions": 27,
+      "total_deletions": 13,
+      "modules": [
+        "docs/advanced",
+        "docs/environment_variables.md"
+      ],
+      "first_commit": "2025-09-11T10:59:20Z",
+      "last_commit": "2025-09-11T10:59:20Z"
+    },
+    {
+      "name": "nikkie",
+      "email": "takuyafjp+develop@gmail.com",
+      "total_commits": 1,
+      "total_additions": 1,
+      "total_deletions": 3,
+      "modules": [
+        "docs/logging.md"
+      ],
+      "first_commit": "2025-09-05T23:30:31+09:00",
+      "last_commit": "2025-09-05T23:30:31+09:00"
+    },
+    {
+      "name": "Glen Keane",
+      "email": "glenkeane.94@gmail.com",
+      "total_commits": 1,
+      "total_additions": 4,
+      "total_deletions": 0,
+      "modules": [
+        "docs/compatibility.md"
+      ],
+      "first_commit": "2025-09-05T15:19:37+01:00",
+      "last_commit": "2025-09-05T15:19:37+01:00"
+    },
+    {
+      "name": "Kamil Monicz",
+      "email": "kamil@monicz.dev",
+      "total_commits": 1,
+      "total_additions": 6,
+      "total_deletions": 0,
+      "modules": [
+        "docs/third_party_packages.md"
+      ],
+      "first_commit": "2025-09-04T10:52:37+02:00",
+      "last_commit": "2025-09-04T10:52:37+02:00"
+    }
+  ],
+  "modules": [
+    {
+      "module": "requirements.txt",
+      "contributors": {
+        "tom@tomchristie.com": {
+          "commits": 1,
+          "additions": 1,
+          "deletions": 1,
+          "blame_lines": 10
+        },
+        "49699333+dependabot[bot]@users.noreply.github.com": {
+          "commits": 1,
+          "additions": 9,
+          "deletions": 9,
+          "blame_lines": 12
+        },
+        "cclauss@me.com": {
+          "commits": 2,
+          "additions": 2,
+          "deletions": 2,
+          "blame_lines": 2
+        },
+        "marcelotryle@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "mb@x14.nl": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        }
+      },
+      "bus_factor": 0.59,
+      "total_commits": 4,
+      "total_lines": 29,
+      "blame_ownership": {
+        "49699333+dependabot[bot]@users.noreply.github.com": 0.41379310344827586,
+        "tom@tomchristie.com": 0.3448275862068966,
+        "marcelotryle@gmail.com": 0.13793103448275862,
+        "cclauss@me.com": 0.06896551724137931,
+        "mb@x14.nl": 0.034482758620689655
+      }
+    },
+    {
+      "module": "tests/client",
+      "contributors": {
+        "cclauss@me.com": {
+          "commits": 3,
+          "additions": 8,
+          "deletions": 8,
+          "blame_lines": 8
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 280
+        },
+        "florimond.manca@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 140
+        },
+        "yeraydiazdiaz@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 138
+        },
+        "jcugat@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 79
+        },
+        "rettier@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 64
+        },
+        "serj.krotov@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 45
+        },
+        "cansarigol@derinbilgi.com.tr": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 29
+        },
+        "tagrain@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 27
+        },
+        "kettleg@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 13
+        },
+        "kousikmitra12@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 6
+        },
+        "1755071+adriangb@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 5
+        },
+        "132141463+T-256@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "mj@zopatista.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 2
+        },
+        "59538462+BERRADA-Omar@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 2
+        },
+        "petr.belskiy@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "toppk@bllue.org": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 10
+        },
+        "eduardo.a.enriquez@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "923113+tyrelsouza@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 17
+        },
+        "sethmichaellarson@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 2
+        }
+      },
+      "bus_factor": 0.31,
+      "total_commits": 3,
+      "total_lines": 875,
+      "blame_ownership": {
+        "tom@tomchristie.com": 0.4180534389921771,
+        "florimond.manca@gmail.com": 0.06044905008635579,
+        "yeraydiazdiaz@gmail.com": 0.05958549222797927,
+        "jcugat@gmail.com": 0.034110535405872194,
+        "rettier@users.noreply.github.com": 0.02763385146804836,
+        "serj.krotov@gmail.com": 0.0641318703647262,
+        "cansarigol@derinbilgi.com.tr": 0.012521588946459413,
+        "tagrain@gmail.com": 0.011658031088082901,
+        "kettleg@gmail.com": 0.005613126079447323,
+        "kousikmitra12@gmail.com": 0.0025906735751295338,
+        "1755071+adriangb@users.noreply.github.com": 0.006629076501066748,
+        "132141463+T-256@users.noreply.github.com": 0.0012953367875647669,
+        "mj@zopatista.com": 0.0008635578583765113,
+        "59538462+BERRADA-Omar@users.noreply.github.com": 0.0008635578583765113,
+        "petr.belskiy@gmail.com": 0.00043177892918825565,
+        "cclauss@me.com": 0.03936735315888013,
+        "toppk@bllue.org": 0.049019607843137254,
+        "eduardo.a.enriquez@gmail.com": 0.0242296918767507,
+        "923113+tyrelsouza@users.noreply.github.com": 0.1619047619047619,
+        "sethmichaellarson@gmail.com": 0.019047619047619046
+      }
+    },
+    {
+      "module": "docs/advanced",
+      "contributors": {
+        "riccardo.magliocchetti@gmail.com": {
+          "commits": 1,
+          "additions": 1,
+          "deletions": 1,
+          "blame_lines": 1
+        },
+        "30701667+tobb10001@users.noreply.github.com": {
+          "commits": 1,
+          "additions": 1,
+          "deletions": 13,
+          "blame_lines": 1
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 87
+        }
+      },
+      "bus_factor": 0.36,
+      "total_commits": 2,
+      "total_lines": 89,
+      "blame_ownership": {
+        "tom@tomchristie.com": 0.9775280898876404,
+        "riccardo.magliocchetti@gmail.com": 0.011235955056179775,
+        "30701667+tobb10001@users.noreply.github.com": 0.011235955056179775
+      }
+    },
+    {
+      "module": ".github/workflows",
+      "contributors": {
+        "49699333+dependabot[bot]@users.noreply.github.com": {
+          "commits": 2,
+          "additions": 2,
+          "deletions": 2,
+          "blame_lines": 2
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 56
+        },
+        "hugovk@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "alex.gronholm@nextday.fi": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 2
+        }
+      },
+      "bus_factor": 0.35,
+      "total_commits": 2,
+      "total_lines": 63,
+      "blame_ownership": {
+        "tom@tomchristie.com": 0.8894523326572008,
+        "hugovk@users.noreply.github.com": 0.04665314401622718,
+        "49699333+dependabot[bot]@users.noreply.github.com": 0.031947261663286,
+        "alex.gronholm@nextday.fi": 0.031947261663286
+      }
+    },
+    {
+      "module": "CHANGELOG.md",
+      "contributors": {
+        "joshdcannon@gmail.com": {
+          "commits": 1,
+          "additions": 4,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 868
+        },
+        "sethmichaellarson@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 98
+        },
+        "florimond.manca@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 67
+        },
+        "92274156+karpetrosyan@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 19
+        },
+        "6771947+epenet@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 15
+        },
+        "yeraydiazdiaz@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 8
+        },
+        "alex.gronholm@nextday.fi": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 6
+        },
+        "aumo@foxmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 5
+        },
+        "146452552+nick2i@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 5
+        },
+        "jon.finerty@isometric.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "petr.belskiy@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "peter.lazorchak@contrastsecurity.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "yury.pliner@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "92274156+karosis88@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 6
+        },
+        "trim21.me@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "kianmeng.ang@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "mb@x14.nl": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "hugovk@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "sufssl03@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "joe.marshall@nottingham.ac.uk": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "liubin0329@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "GreyElaina@outlook.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "the-ress@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "paulschreiber@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "nnonexistent@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "florimond.manca@protonmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "riccardo.magliocchetti@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        }
+      },
+      "bus_factor": 0.11,
+      "total_commits": 1,
+      "total_lines": 1142,
+      "blame_ownership": {
+        "tom@tomchristie.com": 0.7600700525394045,
+        "sethmichaellarson@gmail.com": 0.08581436077057793,
+        "florimond.manca@gmail.com": 0.05866900175131348,
+        "92274156+karpetrosyan@users.noreply.github.com": 0.016637478108581436,
+        "6771947+epenet@users.noreply.github.com": 0.013134851138353765,
+        "yeraydiazdiaz@gmail.com": 0.0070052539404553416,
+        "alex.gronholm@nextday.fi": 0.005253940455341506,
+        "aumo@foxmail.com": 0.0043782837127845885,
+        "146452552+nick2i@users.noreply.github.com": 0.0043782837127845885,
+        "joshdcannon@gmail.com": 0.0035026269702276708,
+        "jon.finerty@isometric.com": 0.0035026269702276708,
+        "petr.belskiy@gmail.com": 0.0035026269702276708,
+        "peter.lazorchak@contrastsecurity.com": 0.0035026269702276708,
+        "yury.pliner@gmail.com": 0.0035026269702276708,
+        "92274156+karosis88@users.noreply.github.com": 0.005253940455341506,
+        "trim21.me@gmail.com": 0.0035026269702276708,
+        "kianmeng.ang@gmail.com": 0.0035026269702276708,
+        "mb@x14.nl": 0.002626970227670753,
+        "hugovk@users.noreply.github.com": 0.002626970227670753,
+        "sufssl03@gmail.com": 0.002626970227670753,
+        "joe.marshall@nottingham.ac.uk": 0.0008756567425569177,
+        "liubin0329@gmail.com": 0.0008756567425569177,
+        "GreyElaina@outlook.com": 0.0008756567425569177,
+        "the-ress@users.noreply.github.com": 0.0008756567425569177,
+        "paulschreiber@gmail.com": 0.0008756567425569177,
+        "nnonexistent@gmail.com": 0.0008756567425569177,
+        "florimond.manca@protonmail.com": 0.0008756567425569177,
+        "riccardo.magliocchetti@gmail.com": 0.0008756567425569177
+      }
+    },
+    {
+      "module": "httpx/__init__.py",
+      "contributors": {
+        "joshdcannon@gmail.com": {
+          "commits": 1,
+          "additions": 1,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 33
+        },
+        "jcugat@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 32
+        },
+        "sethmichaellarson@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 18
+        },
+        "92274156+karpetrosyan@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 11
+        },
+        "florimond.manca@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 6
+        },
+        "yeraydiazdiaz@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 2
+        },
+        "1755071+adriangb@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "fvoron@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "p.godec9@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        }
+      },
+      "bus_factor": 0.41,
+      "total_commits": 1,
+      "total_lines": 106,
+      "blame_ownership": {
+        "tom@tomchristie.com": 0.3113207547169811,
+        "jcugat@gmail.com": 0.3018867924528302,
+        "sethmichaellarson@gmail.com": 0.16981132075471697,
+        "92274156+karpetrosyan@users.noreply.github.com": 0.10377358490566038,
+        "florimond.manca@gmail.com": 0.05660377358490566,
+        "yeraydiazdiaz@gmail.com": 0.018867924528301886,
+        "1755071+adriangb@users.noreply.github.com": 0.009433962264150943,
+        "joshdcannon@gmail.com": 0.009433962264150943,
+        "fvoron@gmail.com": 0.009433962264150943,
+        "p.godec9@gmail.com": 0.009433962264150943
+      }
+    },
+    {
+      "module": "httpx/_auth.py",
+      "contributors": {
+        "joshdcannon@gmail.com": {
+          "commits": 1,
+          "additions": 1,
+          "deletions": 1,
+          "blame_lines": 1
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 146
+        },
+        "yeraydiazdiaz@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 93
+        },
+        "florimond.manca@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 56
+        },
+        "92274156+karpetrosyan@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 18
+        },
+        "rettier@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 15
+        },
+        "johtso@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 7
+        },
+        "the-ress@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "martinmusale@microsoft.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "1755071+adriangb@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "kettleg@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "hukkinj1@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        }
+      },
+      "bus_factor": 0.3,
+      "total_commits": 1,
+      "total_lines": 348,
+      "blame_ownership": {
+        "tom@tomchristie.com": 0.41954022988505746,
+        "yeraydiazdiaz@gmail.com": 0.2672413793103448,
+        "florimond.manca@gmail.com": 0.16091954022988506,
+        "92274156+karpetrosyan@users.noreply.github.com": 0.05172413793103448,
+        "rettier@users.noreply.github.com": 0.04310344827586207,
+        "johtso@gmail.com": 0.020114942528735632,
+        "the-ress@users.noreply.github.com": 0.011494252873563218,
+        "martinmusale@microsoft.com": 0.008620689655172414,
+        "1755071+adriangb@users.noreply.github.com": 0.008620689655172414,
+        "joshdcannon@gmail.com": 0.0028735632183908046,
+        "kettleg@gmail.com": 0.0028735632183908046,
+        "hukkinj1@users.noreply.github.com": 0.0028735632183908046
+      }
+    },
+    {
+      "module": "docs/quickstart.md",
+      "contributors": {
+        "81753080+Zproger@users.noreply.github.com": {
+          "commits": 1,
+          "additions": 1,
+          "deletions": 1,
+          "blame_lines": 1
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 384
+        },
+        "florimond.manca@protonmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 54
+        },
+        "hugovk@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 40
+        },
+        "yeraydiazdiaz@fastmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 18
+        },
+        "florimond.manca@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 16
+        },
+        "bazyli@cyran.dev": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 8
+        },
+        "trim21.me@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 8
+        },
+        "kyle.galbraith459@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 5
+        },
+        "mb@x14.nl": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "fvoron@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "133278+RyanBalfanz@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "contact@zanie.dev": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "izeye@naver.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "92274156+karpetrosyan@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "wos.mateusz16@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "di@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        }
+      },
+      "bus_factor": 0.17,
+      "total_commits": 1,
+      "total_lines": 547,
+      "blame_ownership": {
+        "tom@tomchristie.com": 0.7020109689213894,
+        "florimond.manca@protonmail.com": 0.09872029250457039,
+        "hugovk@users.noreply.github.com": 0.07312614259597806,
+        "yeraydiazdiaz@fastmail.com": 0.03290676416819013,
+        "florimond.manca@gmail.com": 0.029250457038391225,
+        "bazyli@cyran.dev": 0.014625228519195612,
+        "trim21.me@gmail.com": 0.014625228519195612,
+        "kyle.galbraith459@gmail.com": 0.009140767824497258,
+        "mb@x14.nl": 0.007312614259597806,
+        "fvoron@gmail.com": 0.005484460694698354,
+        "133278+RyanBalfanz@users.noreply.github.com": 0.0018281535648994515,
+        "81753080+Zproger@users.noreply.github.com": 0.0018281535648994515,
+        "contact@zanie.dev": 0.0018281535648994515,
+        "izeye@naver.com": 0.0018281535648994515,
+        "92274156+karpetrosyan@users.noreply.github.com": 0.0018281535648994515,
+        "wos.mateusz16@gmail.com": 0.0018281535648994515,
+        "di@users.noreply.github.com": 0.0018281535648994515
+      }
+    },
+    {
+      "module": "docs/environment_variables.md",
+      "contributors": {
+        "30701667+tobb10001@users.noreply.github.com": {
+          "commits": 1,
+          "additions": 26,
+          "deletions": 0,
+          "blame_lines": 26
+        },
+        "serj.krotov@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 32
+        },
+        "sethmichaellarson@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 12
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "florimond.manca@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 2
+        },
+        "cansarigol@derinbilgi.com.tr": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 2
+        },
+        "92274156+karpetrosyan@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        }
+      },
+      "bus_factor": 0.45,
+      "total_commits": 1,
+      "total_lines": 79,
+      "blame_ownership": {
+        "serj.krotov@gmail.com": 0.4050632911392405,
+        "30701667+tobb10001@users.noreply.github.com": 0.3291139240506329,
+        "sethmichaellarson@gmail.com": 0.1518987341772152,
+        "tom@tomchristie.com": 0.05063291139240506,
+        "florimond.manca@gmail.com": 0.02531645569620253,
+        "cansarigol@derinbilgi.com.tr": 0.02531645569620253,
+        "92274156+karpetrosyan@users.noreply.github.com": 0.012658227848101266
+      }
+    },
+    {
+      "module": "docs/logging.md",
+      "contributors": {
+        "takuyafjp+develop@gmail.com": {
+          "commits": 1,
+          "additions": 1,
+          "deletions": 3,
+          "blame_lines": 1
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 79
+        },
+        "aumo@foxmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        }
+      },
+      "bus_factor": 0.36,
+      "total_commits": 1,
+      "total_lines": 81,
+      "blame_ownership": {
+        "tom@tomchristie.com": 0.9753086419753086,
+        "aumo@foxmail.com": 0.012345679012345678,
+        "takuyafjp+develop@gmail.com": 0.012345679012345678
+      }
+    },
+    {
+      "module": "docs/compatibility.md",
+      "contributors": {
+        "glenkeane.94@gmail.com": {
+          "commits": 1,
+          "additions": 4,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 172
+        },
+        "fnesveda@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 10
+        },
+        "92274156+karpetrosyan@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 10
+        },
+        "florimond.manca@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 9
+        },
+        "coltoneakins@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 5
+        },
+        "srikanth.chekuri92@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "92274156+karosis88@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "bart_louwers@hotmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "jonas@5monkeys.se": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "kianmeng.ang@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 2
+        },
+        "falk.ben@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 2
+        },
+        "wynnwilkes@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "Colin-b@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "nigelchiang@outlook.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        }
+      },
+      "bus_factor": 0.23,
+      "total_commits": 1,
+      "total_lines": 232,
+      "blame_ownership": {
+        "tom@tomchristie.com": 0.7413793103448276,
+        "fnesveda@users.noreply.github.com": 0.04310344827586207,
+        "92274156+karpetrosyan@users.noreply.github.com": 0.04310344827586207,
+        "florimond.manca@gmail.com": 0.03879310344827586,
+        "coltoneakins@gmail.com": 0.021551724137931036,
+        "srikanth.chekuri92@gmail.com": 0.017241379310344827,
+        "92274156+karosis88@users.noreply.github.com": 0.017241379310344827,
+        "bart_louwers@hotmail.com": 0.017241379310344827,
+        "glenkeane.94@gmail.com": 0.017241379310344827,
+        "jonas@5monkeys.se": 0.01293103448275862,
+        "kianmeng.ang@gmail.com": 0.008620689655172414,
+        "falk.ben@gmail.com": 0.008620689655172414,
+        "wynnwilkes@gmail.com": 0.004310344827586207,
+        "Colin-b@users.noreply.github.com": 0.004310344827586207,
+        "nigelchiang@outlook.com": 0.004310344827586207
+      }
+    },
+    {
+      "module": "pyproject.toml",
+      "contributors": {
+        "49699333+dependabot[bot]@users.noreply.github.com": {
+          "commits": 1,
+          "additions": 1,
+          "deletions": 1,
+          "blame_lines": 1
+        },
+        "ofekmeister@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 73
+        },
+        "b.sokorski@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 25
+        },
+        "hs@ox.cx": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 11
+        },
+        "marcelotryle@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 5
+        },
+        "mb@x14.nl": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "92274156+karpetrosyan@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 2
+        },
+        "132141463+T-256@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 2
+        },
+        "alex.gronholm@nextday.fi": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "10510431+j178@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "hugovk@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "1324225+hugovk@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "85337624+wenceslas-sanchez@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "paulschreiber@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "marcel@telka.sk": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        }
+      },
+      "bus_factor": 0.26,
+      "total_commits": 1,
+      "total_lines": 132,
+      "blame_ownership": {
+        "ofekmeister@gmail.com": 0.553030303030303,
+        "b.sokorski@gmail.com": 0.1893939393939394,
+        "hs@ox.cx": 0.08333333333333333,
+        "marcelotryle@gmail.com": 0.03787878787878788,
+        "mb@x14.nl": 0.022727272727272728,
+        "92274156+karpetrosyan@users.noreply.github.com": 0.022727272727272728,
+        "tom@tomchristie.com": 0.015151515151515152,
+        "132141463+T-256@users.noreply.github.com": 0.015151515151515152,
+        "alex.gronholm@nextday.fi": 0.007575757575757576,
+        "10510431+j178@users.noreply.github.com": 0.007575757575757576,
+        "hugovk@users.noreply.github.com": 0.007575757575757576,
+        "1324225+hugovk@users.noreply.github.com": 0.007575757575757576,
+        "85337624+wenceslas-sanchez@users.noreply.github.com": 0.007575757575757576,
+        "paulschreiber@gmail.com": 0.007575757575757576,
+        "49699333+dependabot[bot]@users.noreply.github.com": 0.007575757575757576,
+        "marcel@telka.sk": 0.007575757575757576
+      }
+    },
+    {
+      "module": "docs/third_party_packages.md",
+      "contributors": {
+        "kamil@monicz.dev": {
+          "commits": 1,
+          "additions": 6,
+          "deletions": 0,
+          "blame_lines": 6
+        },
+        "will.ockmore@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 40
+        },
+        "florimond.manca@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 24
+        },
+        "132141463+T-256@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 8
+        },
+        "Colin-b@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 8
+        },
+        "AberSheeran@qq.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 5
+        },
+        "jair.henrique@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "92274156+karosis88@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "florimond.manca@protonmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "danclaudiupop@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        },
+        "sidharthv96@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 2
+        },
+        "92274156+karpetrosyan@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        }
+      },
+      "bus_factor": 0.46,
+      "total_commits": 1,
+      "total_lines": 107,
+      "blame_ownership": {
+        "will.ockmore@gmail.com": 0.37383177570093457,
+        "florimond.manca@gmail.com": 0.22429906542056074,
+        "132141463+T-256@users.noreply.github.com": 0.07476635514018691,
+        "Colin-b@users.noreply.github.com": 0.07476635514018691,
+        "kamil@monicz.dev": 0.056074766355140186,
+        "AberSheeran@qq.com": 0.04672897196261682,
+        "jair.henrique@gmail.com": 0.037383177570093455,
+        "92274156+karosis88@users.noreply.github.com": 0.028037383177570093,
+        "florimond.manca@protonmail.com": 0.028037383177570093,
+        "danclaudiupop@gmail.com": 0.028037383177570093,
+        "sidharthv96@gmail.com": 0.018691588785046728,
+        "92274156+karpetrosyan@users.noreply.github.com": 0.009345794392523364
+      }
+    },
+    {
+      "module": "httpx/_exceptions.py",
+      "contributors": {
+        "cclauss@me.com": {
+          "commits": 1,
+          "additions": 1,
+          "deletions": 3,
+          "blame_lines": 1
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 212
+        },
+        "florimond.manca@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 75
+        },
+        "92274156+karpetrosyan@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 39
+        },
+        "nigelchiang@outlook.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 10
+        },
+        "michaeloliver__@outlook.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 10
+        },
+        "132141463+T-256@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 9
+        },
+        "39669025+halbow@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 9
+        },
+        "sethmichaellarson@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "fvoron@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 4
+        },
+        "1755071+adriangb@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "taras.sotnikov@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "patrick.arminio@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        },
+        "yeraydiazdiaz@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        }
+      },
+      "bus_factor": 0.24,
+      "total_commits": 1,
+      "total_lines": 377,
+      "blame_ownership": {
+        "tom@tomchristie.com": 0.5623342175066313,
+        "florimond.manca@gmail.com": 0.1989389920424403,
+        "92274156+karpetrosyan@users.noreply.github.com": 0.10344827586206896,
+        "nigelchiang@outlook.com": 0.026525198938992044,
+        "michaeloliver__@outlook.com": 0.026525198938992044,
+        "132141463+T-256@users.noreply.github.com": 0.023872679045092837,
+        "39669025+halbow@users.noreply.github.com": 0.023872679045092837,
+        "sethmichaellarson@gmail.com": 0.010610079575596816,
+        "fvoron@gmail.com": 0.010610079575596816,
+        "1755071+adriangb@users.noreply.github.com": 0.002652519893899204,
+        "taras.sotnikov@gmail.com": 0.002652519893899204,
+        "patrick.arminio@gmail.com": 0.002652519893899204,
+        "cclauss@me.com": 0.002652519893899204,
+        "yeraydiazdiaz@gmail.com": 0.002652519893899204
+      }
+    },
+    {
+      "module": "httpx/_urls.py",
+      "contributors": {
+        "cclauss@me.com": {
+          "commits": 1,
+          "additions": 1,
+          "deletions": 1,
+          "blame_lines": 1
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 603
+        },
+        "92274156+karpetrosyan@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 22
+        },
+        "132141463+T-256@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 12
+        },
+        "1755071+adriangb@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 3
+        }
+      },
+      "bus_factor": 0.24,
+      "total_commits": 1,
+      "total_lines": 641,
+      "blame_ownership": {
+        "tom@tomchristie.com": 0.9407176287051482,
+        "92274156+karpetrosyan@users.noreply.github.com": 0.0343213728549142,
+        "132141463+T-256@users.noreply.github.com": 0.0187207488299532,
+        "1755071+adriangb@users.noreply.github.com": 0.0046801872074883,
+        "cclauss@me.com": 0.0015600624024961
+      }
+    },
+    {
+      "module": "tests/test_content.py",
+      "contributors": {
+        "cclauss@me.com": {
+          "commits": 1,
+          "additions": 6,
+          "deletions": 6,
+          "blame_lines": 6
+        },
+        "tom@tomchristie.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 390
+        },
+        "euri10@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 41
+        },
+        "59538462+BERRADA-Omar@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 23
+        },
+        "jamesbraza@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 20
+        },
+        "tagrain@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 19
+        },
+        "mj@zopatista.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 6
+        },
+        "gstrauss5@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 6
+        },
+        "kotvberloge@gmail.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 6
+        },
+        "1755071+adriangb@users.noreply.github.com": {
+          "commits": 0,
+          "additions": 0,
+          "deletions": 0,
+          "blame_lines": 1
+        }
+      },
+      "bus_factor": 0.25,
+      "total_commits": 1,
+      "total_lines": 518,
+      "blame_ownership": {
+        "tom@tomchristie.com": 0.752895752895753,
+        "euri10@users.noreply.github.com": 0.07915057915057915,
+        "59538462+BERRADA-Omar@users.noreply.github.com": 0.0444015444015444,
+        "jamesbraza@gmail.com": 0.03861003861003861,
+        "tagrain@gmail.com": 0.03667953667953668,
+        "mj@zopatista.com": 0.011583011583011582,
+        "gstrauss5@gmail.com": 0.011583011583011582,
+        "kotvberloge@gmail.com": 0.011583011583011582,
+        "cclauss@me.com": 0.011583011583011582,
+        "1755071+adriangb@users.noreply.github.com": 0.0019305019305019305
+      }
+    }
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "id": "c:49699333+dependabot[bot]@users.noreply.github.com",
+        "type": "contributor",
+        "label": "dependabot[bot]",
+        "size": 15.0,
+        "color": "#3b82f6",
+        "total_commits": 2,
+        "total_lines": 24,
+        "expertise_areas": [],
+        "bus_factor": 0.0,
+        "risk_level": ""
+      },
+      {
+        "id": "c:cclauss@me.com",
+        "type": "contributor",
+        "label": "Christian Clauss",
+        "size": 15.0,
+        "color": "#3b82f6",
+        "total_commits": 2,
+        "total_lines": 38,
+        "expertise_areas": [],
+        "bus_factor": 0.0,
+        "risk_level": ""
+      },
+      {
+        "id": "c:joshdcannon@gmail.com",
+        "type": "contributor",
+        "label": "Josh Cannon",
+        "size": 9.0,
+        "color": "#3b82f6",
+        "total_commits": 1,
+        "total_lines": 7,
+        "expertise_areas": [],
+        "bus_factor": 0.0,
+        "risk_level": ""
+      },
+      {
+        "id": "c:riccardo.magliocchetti@gmail.com",
+        "type": "contributor",
+        "label": "Riccardo Magliocchetti",
+        "size": 9.0,
+        "color": "#3b82f6",
+        "total_commits": 1,
+        "total_lines": 2,
+        "expertise_areas": [],
+        "bus_factor": 0.0,
+        "risk_level": ""
+      },
+      {
+        "id": "c:81753080+Zproger@users.noreply.github.com",
+        "type": "contributor",
+        "label": "ZProger",
+        "size": 9.0,
+        "color": "#3b82f6",
+        "total_commits": 1,
+        "total_lines": 2,
+        "expertise_areas": [],
+        "bus_factor": 0.0,
+        "risk_level": ""
+      },
+      {
+        "id": "c:tom@tomchristie.com",
+        "type": "contributor",
+        "label": "Kim Christie",
+        "size": 9.0,
+        "color": "#3b82f6",
+        "total_commits": 1,
+        "total_lines": 2,
+        "expertise_areas": [],
+        "bus_factor": 0.0,
+        "risk_level": ""
+      },
+      {
+        "id": "c:30701667+tobb10001@users.noreply.github.com",
+        "type": "contributor",
+        "label": "Tobias Fischer",
+        "size": 9.0,
+        "color": "#3b82f6",
+        "total_commits": 1,
+        "total_lines": 40,
+        "expertise_areas": [],
+        "bus_factor": 0.0,
+        "risk_level": ""
+      },
+      {
+        "id": "c:takuyafjp+develop@gmail.com",
+        "type": "contributor",
+        "label": "nikkie",
+        "size": 9.0,
+        "color": "#3b82f6",
+        "total_commits": 1,
+        "total_lines": 4,
+        "expertise_areas": [],
+        "bus_factor": 0.0,
+        "risk_level": ""
+      },
+      {
+        "id": "c:glenkeane.94@gmail.com",
+        "type": "contributor",
+        "label": "Glen Keane",
+        "size": 9.0,
+        "color": "#3b82f6",
+        "total_commits": 1,
+        "total_lines": 4,
+        "expertise_areas": [],
+        "bus_factor": 0.0,
+        "risk_level": ""
+      },
+      {
+        "id": "c:kamil@monicz.dev",
+        "type": "contributor",
+        "label": "Kamil Monicz",
+        "size": 9.0,
+        "color": "#3b82f6",
+        "total_commits": 1,
+        "total_lines": 6,
+        "expertise_areas": [],
+        "bus_factor": 0.0,
+        "risk_level": ""
+      },
+      {
+        "id": "m:requirements.txt",
+        "type": "module",
+        "label": "requirements.txt",
+        "size": 20.0,
+        "color": "#eab308",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.59,
+        "risk_level": "moderate"
+      },
+      {
+        "id": "m:tests/client",
+        "type": "module",
+        "label": "tests/client",
+        "size": 16.25,
+        "color": "#f97316",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.31,
+        "risk_level": "high"
+      },
+      {
+        "id": "m:docs/advanced",
+        "type": "module",
+        "label": "docs/advanced",
+        "size": 12.5,
+        "color": "#f97316",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.36,
+        "risk_level": "high"
+      },
+      {
+        "id": "m:.github/workflows",
+        "type": "module",
+        "label": ".github/workflows",
+        "size": 12.5,
+        "color": "#f97316",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.35,
+        "risk_level": "high"
+      },
+      {
+        "id": "m:CHANGELOG.md",
+        "type": "module",
+        "label": "CHANGELOG.md",
+        "size": 8.75,
+        "color": "#ef4444",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.11,
+        "risk_level": "critical"
+      },
+      {
+        "id": "m:httpx/__init__.py",
+        "type": "module",
+        "label": "httpx/__init__.py",
+        "size": 8.75,
+        "color": "#f97316",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.41,
+        "risk_level": "high"
+      },
+      {
+        "id": "m:httpx/_auth.py",
+        "type": "module",
+        "label": "httpx/_auth.py",
+        "size": 8.75,
+        "color": "#f97316",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.3,
+        "risk_level": "high"
+      },
+      {
+        "id": "m:docs/quickstart.md",
+        "type": "module",
+        "label": "docs/quickstart.md",
+        "size": 8.75,
+        "color": "#ef4444",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.17,
+        "risk_level": "critical"
+      },
+      {
+        "id": "m:docs/environment_variables.md",
+        "type": "module",
+        "label": "docs/environment_variables.md",
+        "size": 8.75,
+        "color": "#f97316",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.45,
+        "risk_level": "high"
+      },
+      {
+        "id": "m:docs/logging.md",
+        "type": "module",
+        "label": "docs/logging.md",
+        "size": 8.75,
+        "color": "#f97316",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.36,
+        "risk_level": "high"
+      },
+      {
+        "id": "m:docs/compatibility.md",
+        "type": "module",
+        "label": "docs/compatibility.md",
+        "size": 8.75,
+        "color": "#ef4444",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.23,
+        "risk_level": "critical"
+      },
+      {
+        "id": "m:pyproject.toml",
+        "type": "module",
+        "label": "pyproject.toml",
+        "size": 8.75,
+        "color": "#ef4444",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.26,
+        "risk_level": "critical"
+      },
+      {
+        "id": "m:docs/third_party_packages.md",
+        "type": "module",
+        "label": "docs/third_party_packages.md",
+        "size": 8.75,
+        "color": "#f97316",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.46,
+        "risk_level": "high"
+      },
+      {
+        "id": "m:httpx/_exceptions.py",
+        "type": "module",
+        "label": "httpx/_exceptions.py",
+        "size": 8.75,
+        "color": "#ef4444",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.24,
+        "risk_level": "critical"
+      },
+      {
+        "id": "m:httpx/_urls.py",
+        "type": "module",
+        "label": "httpx/_urls.py",
+        "size": 8.75,
+        "color": "#ef4444",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.24,
+        "risk_level": "critical"
+      },
+      {
+        "id": "m:tests/test_content.py",
+        "type": "module",
+        "label": "tests/test_content.py",
+        "size": 8.75,
+        "color": "#ef4444",
+        "total_commits": 0,
+        "total_lines": 0,
+        "expertise_areas": [],
+        "bus_factor": 0.25,
+        "risk_level": "critical"
+      }
+    ],
+    "links": [
+      {
+        "source": "c:tom@tomchristie.com",
+        "target": "m:requirements.txt",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:49699333+dependabot[bot]@users.noreply.github.com",
+        "target": "m:requirements.txt",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:cclauss@me.com",
+        "target": "m:requirements.txt",
+        "weight": 0.5,
+        "commits": 2,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:cclauss@me.com",
+        "target": "m:tests/client",
+        "weight": 0.75,
+        "commits": 3,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:riccardo.magliocchetti@gmail.com",
+        "target": "m:docs/advanced",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:30701667+tobb10001@users.noreply.github.com",
+        "target": "m:docs/advanced",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:49699333+dependabot[bot]@users.noreply.github.com",
+        "target": "m:.github/workflows",
+        "weight": 0.5,
+        "commits": 2,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:joshdcannon@gmail.com",
+        "target": "m:CHANGELOG.md",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:joshdcannon@gmail.com",
+        "target": "m:httpx/__init__.py",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:joshdcannon@gmail.com",
+        "target": "m:httpx/_auth.py",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:81753080+Zproger@users.noreply.github.com",
+        "target": "m:docs/quickstart.md",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:30701667+tobb10001@users.noreply.github.com",
+        "target": "m:docs/environment_variables.md",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:takuyafjp+develop@gmail.com",
+        "target": "m:docs/logging.md",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:glenkeane.94@gmail.com",
+        "target": "m:docs/compatibility.md",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:49699333+dependabot[bot]@users.noreply.github.com",
+        "target": "m:pyproject.toml",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:kamil@monicz.dev",
+        "target": "m:docs/third_party_packages.md",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:cclauss@me.com",
+        "target": "m:httpx/_exceptions.py",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:cclauss@me.com",
+        "target": "m:httpx/_urls.py",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      },
+      {
+        "source": "c:cclauss@me.com",
+        "target": "m:tests/test_content.py",
+        "weight": 0.25,
+        "commits": 1,
+        "expertise_depth": "working"
+      }
+    ]
+  },
+  "expertise_classifications": [
+    {
+      "pr_number": 3699,
+      "author": "thejcannon",
+      "change_type": "feature",
+      "complexity": "trivial",
+      "knowledge_depth": "surface",
+      "expertise_signals": [
+        "Adding an existing class to public exports",
+        "Following established pattern of __all__ declarations",
+        "Mechanical change requiring no understanding of FunctionAuth implementation"
+      ],
+      "modules_touched": [
+        "httpx"
+      ],
+      "summary": "Exposes an existing authentication class to the public API by adding it to export lists - a routine API surface change."
+    },
+    {
+      "pr_number": 3629,
+      "author": "Zaczero",
+      "change_type": "docs",
+      "complexity": "trivial",
+      "knowledge_depth": "surface",
+      "expertise_signals": [
+        "Adding a single entry to an existing documentation list",
+        "Follows exact pattern of surrounding entries (GitHub link + one-line description)",
+        "No technical insight required - just documenting existence of a package"
+      ],
+      "modules_touched": [
+        "docs"
+      ],
+      "summary": "Added a third-party package reference to documentation following the existing template pattern."
+    },
+    {
+      "pr_number": 3579,
+      "author": "tobb10001",
+      "change_type": "docs",
+      "complexity": "trivial",
+      "knowledge_depth": "surface",
+      "expertise_signals": [
+        "Moves existing documentation content to a different location",
+        "Adds standard environment variable descriptions following template pattern",
+        "No code changes or technical insights provided",
+        "Copy-paste style documentation with example commands"
+      ],
+      "modules_touched": [
+        "docs/advanced",
+        "docs"
+      ],
+      "summary": "Restructures SSL certificate documentation by moving environment variable details from advanced SSL guide to dedicated environment variables page, following existing doc patterns."
+    },
+    {
+      "pr_number": 3651,
+      "author": "cclauss",
+      "change_type": "dependency",
+      "complexity": "trivial",
+      "knowledge_depth": "surface",
+      "expertise_signals": [
+        "Pure formatting changes from ruff upgrade (string concatenation, quote style)",
+        "No functional changes - only style adjustments",
+        "Mechanical dependency version bump in requirements.txt"
+      ],
+      "modules_touched": [
+        "httpx",
+        "tests"
+      ],
+      "summary": "Upgrades ruff formatter and applies its automatic formatting rules, requiring no understanding of the codebase's functionality."
+    },
+    {
+      "pr_number": 3654,
+      "author": "cclauss",
+      "change_type": "dependency",
+      "complexity": "trivial",
+      "knowledge_depth": "surface",
+      "expertise_signals": [
+        "Bumps mypy version from 1.13.0 to 1.17.1",
+        "Removes '# type: ignore' comments that are no longer needed with newer mypy",
+        "Mechanical find-and-replace of type ignore comments",
+        "No logic changes, just satisfying updated type checker"
+      ],
+      "modules_touched": [
+        "requirements.txt",
+        "tests/client"
+      ],
+      "summary": "Updates mypy dependency and removes now-unnecessary type ignore comments, showing basic maintenance work without deep understanding of the codebase."
+    }
+  ],
+  "review_classifications": [
+    {
+      "pr_number": 3703,
+      "reviewer": "karpetrosyan",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Generic approval message with no specific feedback",
+        "No mention of what the typo was or validation of the fix",
+        "Body contains only 4 words"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Empty approval for a typo fix with no substantive review."
+    },
+    {
+      "pr_number": 3512,
+      "reviewer": "lovelydinosaur",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Single word response 'Thanks'",
+        "No review of documentation content or accuracy",
+        "Approved without any substantive feedback"
+      ],
+      "knowledge_transfer": false,
+      "summary": "One-word approval with no review of the documentation changes."
+    },
+    {
+      "pr_number": 3552,
+      "reviewer": "lovelydinosaur",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Multiple empty comment reviews followed by minimal approval",
+        "Approval body is casual/informal with no technical content",
+        "No discussion of the actual changes or documentation quality"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Approved with minimal engagement and no substantive feedback on the documentation changes."
+    },
+    {
+      "pr_number": 3629,
+      "reviewer": "copilot-pull-request-reviewer",
+      "quality": "surface",
+      "signals": [
+        "Only summarizes what the PR does without analysis",
+        "No evaluation of the package's value or implementation",
+        "Automated bot comment with generic structure"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Bot-generated summary that restates the PR description without adding value."
+    },
+    {
+      "pr_number": 3629,
+      "reviewer": "lovelydinosaur",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Empty review body",
+        "Approved without any comments",
+        "No engagement with the change"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Empty approval with no review content whatsoever."
+    },
+    {
+      "pr_number": 3389,
+      "reviewer": "lovelydinosaur",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Generic positive comment with no specific feedback",
+        "No mention of the actual changes or their impact",
+        "Approved without discussing code organization decisions"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Approved with only a brief compliment, no substantive review of the file reorganization."
+    },
+    {
+      "pr_number": 2278,
+      "reviewer": "adriangb",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Author commenting on own PR",
+        "All 8 comments have empty bodies",
+        "No substantive feedback provided"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Author's own comments with no content - likely responses to discussions."
+    },
+    {
+      "pr_number": 2278,
+      "reviewer": "lovelydinosaur",
+      "quality": "rubber_stamp",
+      "signals": [
+        "4 out of 5 comments have empty bodies",
+        "Only substantive comment is 'Looking good!' (2 words)",
+        "No technical feedback or analysis"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Minimal engagement with only a brief approval comment."
+    },
+    {
+      "pr_number": 2278,
+      "reviewer": "jhominal",
+      "quality": "rubber_stamp",
+      "signals": [
+        "All 8 comments have empty bodies",
+        "No review content despite multiple interactions",
+        "Appears to be discussion responses without substance"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Multiple interactions but no actual review content provided."
+    },
+    {
+      "pr_number": 3367,
+      "reviewer": "lovelydinosaur",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Multiple empty comment bodies",
+        "Approval with minimal text ('Yep, thx. \u263a\ufe0f')",
+        "No substantive feedback across 5 separate review actions"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Approved with minimal engagement and no meaningful feedback."
+    },
+    {
+      "pr_number": 3367,
+      "reviewer": "BERRADA-Omar",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Both review comments are empty",
+        "Author commenting on own PR without substance"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Author's own comments are empty, adding no value to the review process."
+    },
+    {
+      "pr_number": 3699,
+      "reviewer": "karpetrosyan",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Body contains only 'LGTM! Thanks' (2 words)",
+        "No technical feedback provided",
+        "Approved without any substantive comments"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Quick approval with no meaningful review content."
+    },
+    {
+      "pr_number": 2252,
+      "reviewer": "lovelydinosaur",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Multiple empty comment reviews",
+        "No substantive feedback provided",
+        "Author reviewing own PR"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Author left multiple empty comments on their own PR."
+    },
+    {
+      "pr_number": 2252,
+      "reviewer": "xkortex",
+      "quality": "rubber_stamp",
+      "signals": [
+        "All reviews have empty bodies",
+        "No feedback or analysis provided"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Multiple empty comments with no review content."
+    },
+    {
+      "pr_number": 2252,
+      "reviewer": "kloczek",
+      "quality": "surface",
+      "signals": [
+        "Mix of LGTM and empty approvals",
+        "Only substantive comment is about merge conflicts",
+        "No analysis of the actual changes"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Approved multiple times with minimal feedback, only noting merge conflicts."
+    },
+    {
+      "pr_number": 2252,
+      "reviewer": "rafalp",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Empty approval",
+        "No review content provided"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Empty approval with no review feedback."
+    },
+    {
+      "pr_number": 3419,
+      "reviewer": "zanieb",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Body contains only 4 words",
+        "No technical feedback provided",
+        "Approved without discussing any changes"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Quick approval with minimal engagement on the actual code changes."
+    },
+    {
+      "pr_number": 3419,
+      "reviewer": "zanieb",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Empty review body",
+        "COMMENTED state with no content",
+        "No value added to the review process"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Empty comment that adds no review value."
+    },
+    {
+      "pr_number": 2911,
+      "reviewer": "T-256",
+      "quality": "surface",
+      "signals": [
+        "Brief approval with minimal context",
+        "References another PR but doesn't explain the connection",
+        "No analysis of the cleanup implementation"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Approved with minimal context about removing a utility function."
+    },
+    {
+      "pr_number": 2911,
+      "reviewer": "karpetrosyan",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Empty review body",
+        "Approved without any feedback",
+        "No engagement with the changes"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Empty approval with no review content."
+    },
+    {
+      "pr_number": 2911,
+      "reviewer": "alexmojaki",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Empty comment body",
+        "No substantive feedback provided",
+        "Comment state suggests no meaningful review"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Empty comment with no review substance."
+    },
+    {
+      "pr_number": 2911,
+      "reviewer": "lovelydinosaur",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Author commenting on own PR",
+        "Empty comment body",
+        "No self-review insights provided"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Author's empty comment on their own PR."
+    },
+    {
+      "pr_number": 307,
+      "reviewer": "StephenBrown2",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Multiple comments with empty body",
+        "No substantive feedback provided",
+        "Pure activity without content"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Multiple empty comments indicating no meaningful review provided."
+    },
+    {
+      "pr_number": 307,
+      "reviewer": "lovelydinosaur",
+      "quality": "thorough",
+      "signals": [
+        "Questions security exposure area of env variables",
+        "Suggests limiting scope to SSL_CERT_FILE only",
+        "References 'thoughts and questions above' indicating detailed inline review"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Provides substantive feedback on security implications and scope of environment variable exposure."
+    },
+    {
+      "pr_number": 307,
+      "reviewer": "sethmlarson",
+      "quality": "surface",
+      "signals": [
+        "Multiple CHANGES_REQUESTED with empty or minimal bodies",
+        "One comment says 'Some more review comments' without detail",
+        "Pattern suggests inline comments without substantial discussion"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Requested changes multiple times but provided minimal context in review bodies."
+    },
+    {
+      "pr_number": 307,
+      "reviewer": "cansarigol",
+      "quality": "rubber_stamp",
+      "signals": [
+        "Author responding with empty comments",
+        "No substantive responses to reviewer feedback",
+        "Pure activity markers"
+      ],
+      "knowledge_transfer": false,
+      "summary": "Author's empty responses to reviewer comments without meaningful engagement."
+    }
+  ],
+  "pattern_result": {
+    "executive_summary": "httpx appears to be experiencing a silent leadership crisis. Tom Christie holds 70-98% ownership of critical modules but hasn't committed in 6 months. The project is running on autopilot with only documentation updates and dependency bumps, while review quality has collapsed into rubber-stamping.",
+    "insights": [
+      {
+        "category": "risk",
+        "title": "Ghost Architect Crisis",
+        "description": "Tom Christie (tom@tomchristie.com) owns 94% of httpx/_urls.py, 98% of docs/advanced, 89% of .github/workflows, and 70%+ of most core modules but has zero commits in the analysis period. The project's brain trust has gone silent while still holding massive blame ownership.",
+        "severity": "critical",
+        "people": [
+          "tom@tomchristie.com"
+        ],
+        "modules": [
+          "httpx/_urls.py",
+          "httpx/_exceptions.py",
+          "docs/advanced",
+          ".github/workflows",
+          "CHANGELOG.md"
+        ]
+      },
+      {
+        "category": "pattern",
+        "title": "Rubber Stamp Review Ring",
+        "description": "lovelydinosaur and karpetrosyan form a review approval ring, collectively rubber-stamping 15+ PRs without meaningful review. lovelydinosaur provided empty approvals on PR#3629, #3389, #3367, #2252, while karpetrosyan did the same on PR#3703, #3699, #2911. Zero knowledge transfer occurring.",
+        "severity": "high",
+        "people": [
+          "lovelydinosaur",
+          "karpetrosyan"
+        ],
+        "modules": [
+          "all"
+        ]
+      },
+      {
+        "category": "risk",
+        "title": "Surface-Only Development",
+        "description": "100% of recent PRs are classified as 'surface' level - documentation tweaks, dependency bumps, and trivial API exposures. No architectural or deep functionality changes. Combined with Tom Christie's absence, this suggests no one currently understands the core codebase deeply enough to make substantial changes.",
+        "severity": "high",
+        "people": [
+          "cclauss@me.com",
+          "joshdcannon@gmail.com",
+          "takuyafjp+develop@gmail.com"
+        ],
+        "modules": [
+          "httpx/_auth.py",
+          "httpx/__init__.py",
+          "httpx/_exceptions.py"
+        ]
+      },
+      {
+        "category": "pattern",
+        "title": "Hidden Secondary Owners Emerging",
+        "description": "While invisible in recent commits, serj.krotov@gmail.com owns 41% of docs/environment_variables.md and ofekmeister@gmail.com owns 55% of pyproject.toml. These could be dormant experts who should be re-engaged as Tom's potential successors.",
+        "severity": "medium",
+        "people": [
+          "serj.krotov@gmail.com",
+          "ofekmeister@gmail.com"
+        ],
+        "modules": [
+          "docs/environment_variables.md",
+          "pyproject.toml"
+        ]
+      },
+      {
+        "category": "opportunity",
+        "title": "Christian Clauss: The Only Real Maintainer",
+        "description": "cclauss@me.com is the only recent contributor touching actual code files (httpx/_exceptions.py, httpx/_urls.py) rather than just docs. With 2 commits touching core modules, they're effectively the acting technical lead by default.",
+        "severity": "medium",
+        "people": [
+          "cclauss@me.com"
+        ],
+        "modules": [
+          "httpx/_exceptions.py",
+          "httpx/_urls.py",
+          "tests/test_content.py"
+        ]
+      },
+      {
+        "category": "risk",
+        "title": "Documentation Drift Without Core Review",
+        "description": "7 of 10 human contributors only touched documentation. With no deep reviewers active and Tom Christie absent, documentation changes are being merged without verification they match actual behavior. PR#3579 moved SSL docs without any core maintainer review.",
+        "severity": "medium",
+        "people": [
+          "30701667+tobb10001@users.noreply.github.com",
+          "takuyafjp+develop@gmail.com",
+          "kamil@monicz.dev"
+        ],
+        "modules": [
+          "docs/advanced",
+          "docs/environment_variables.md",
+          "docs/logging.md"
+        ]
+      }
+    ],
+    "recommendations": [
+      "Urgently contact Tom Christie about succession planning or formal handoff of his 70%+ ownership modules",
+      "Replace rubber-stamp reviewers (lovelydinosaur, karpetrosyan) with a proper code review process",
+      "Re-engage dormant experts serj.krotov and ofekmeister who hold significant module ownership",
+      "Promote Christian Clauss to official maintainer status as the only active code contributor",
+      "Implement mandatory deep review for any PR touching core modules (httpx/*.py files)"
+    ]
+  }
+}
