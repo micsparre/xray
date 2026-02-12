@@ -24,7 +24,7 @@ export function AnalysisProgress({ currentStage, stageProgress, stageMessage }: 
             <div
               key={stage.num}
               className={`flex items-center gap-2.5 px-2 py-1.5 rounded transition-colors ${
-                isActive ? 'bg-blue-500/10' : ''
+                isActive ? 'bg-zinc-500/10' : ''
               }`}
             >
               <div
@@ -32,15 +32,15 @@ export function AnalysisProgress({ currentStage, stageProgress, stageMessage }: 
                   isDone
                     ? 'bg-green-500 text-white'
                     : isActive
-                    ? 'bg-blue-500 text-white animate-pulse'
-                    : 'bg-slate-700 text-slate-500'
+                    ? 'bg-white text-zinc-900 animate-pulse'
+                    : 'bg-zinc-700 text-zinc-500'
                 }`}
               >
                 {isDone ? '\u2713' : stage.num}
               </div>
               <span
                 className={`text-xs ${
-                  isDone ? 'text-green-400' : isActive ? 'text-white' : 'text-slate-500'
+                  isDone ? 'text-green-400' : isActive ? 'text-white' : 'text-zinc-500'
                 }`}
               >
                 {stage.label}
@@ -52,13 +52,13 @@ export function AnalysisProgress({ currentStage, stageProgress, stageMessage }: 
 
       {currentStage > 0 && (
         <div className="space-y-1">
-          <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
+              className="h-full bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full transition-all duration-500"
               style={{ width: `${stageProgress * 100}%` }}
             />
           </div>
-          <p className="text-[11px] text-slate-400 truncate">{stageMessage}</p>
+          <p className="text-[11px] text-zinc-400 truncate">{stageMessage}</p>
         </div>
       )}
     </div>

@@ -42,7 +42,7 @@
 - **Why explored:** "2nd layer" AI ideas across user's domains
 - **Why killed:** All require private data to demo. Can't point at a public repo. Demo-ability (30% of score) is critical.
 
-## Why Engineering Team X-Ray Won
+## Why xray Won
 
 1. **"2nd layer" AI philosophy** — AI reveals invisible patterns, humans act on them
 2. **Demo-ability** — works on any public GitHub repo, no private data needed

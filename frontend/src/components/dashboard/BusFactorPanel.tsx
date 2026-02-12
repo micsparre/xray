@@ -28,10 +28,10 @@ export function BusFactorPanel({ modules }: Props) {
           return (
             <div
               key={mod.module}
-              className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-3 space-y-2"
+              className="bg-zinc-800/50 border border-zinc-700/50 rounded-lg p-3 space-y-2"
             >
               <div className="flex items-start justify-between gap-2">
-                <h4 className="text-xs font-mono text-slate-200 truncate flex-1">
+                <h4 className="text-xs font-mono text-zinc-200 truncate flex-1">
                   {mod.module}
                 </h4>
                 <span
@@ -42,7 +42,7 @@ export function BusFactorPanel({ modules }: Props) {
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                <div className="flex-1 h-1.5 bg-zinc-700 rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all"
                     style={{
@@ -58,12 +58,12 @@ export function BusFactorPanel({ modules }: Props) {
                     }}
                   />
                 </div>
-                <span className="text-[10px] text-slate-400 tabular-nums">
+                <span className="text-[10px] text-zinc-400 tabular-nums">
                   {(mod.bus_factor * 100).toFixed(0)}%
                 </span>
               </div>
 
-              <div className="text-[10px] text-slate-400">
+              <div className="text-[10px] text-zinc-400">
                 {mod.total_commits} commits &middot; {Object.keys(mod.contributors).length} contributors
               </div>
 
@@ -71,8 +71,8 @@ export function BusFactorPanel({ modules }: Props) {
                 <div className="space-y-0.5">
                   {topOwners.map(([email, pct]) => (
                     <div key={email} className="flex items-center justify-between text-[10px]">
-                      <span className="text-slate-400 truncate">{email.split('@')[0]}</span>
-                      <span className="text-slate-500 tabular-nums">{(pct * 100).toFixed(0)}%</span>
+                      <span className="text-zinc-400 truncate">{email.split('@')[0]}</span>
+                      <span className="text-zinc-500 tabular-nums">{(pct * 100).toFixed(0)}%</span>
                     </div>
                   ))}
                 </div>

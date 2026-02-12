@@ -1,4 +1,4 @@
-# Architecture — Engineering Team X-Ray
+# Architecture — xray
 
 ## System Overview
 

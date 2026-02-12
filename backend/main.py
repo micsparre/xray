@@ -16,13 +16,13 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname
 async def lifespan(app: FastAPI):
     # Startup: ensure cache directory exists
     Path("cached_results").mkdir(exist_ok=True)
-    logging.info("Engineering Team X-Ray backend starting")
+    logging.info("xray backend starting")
     yield
     logging.info("Backend shutting down")
 
 
 app = FastAPI(
-    title="Engineering Team X-Ray",
+    title="xray",
     description="AI-powered analysis of engineering team knowledge structures",
     version="1.0.0",
     lifespan=lifespan,
@@ -41,4 +41,4 @@ app.include_router(router)
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "service": "engineering-team-xray"}
+    return {"status": "ok", "service": "xray"}

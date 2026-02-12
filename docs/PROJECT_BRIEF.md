@@ -1,4 +1,4 @@
-# Engineering Team X-Ray
+# xray
 
 ## One-Liner
 AI that reads your codebase to reveal the invisible knowledge structure of your engineering team.

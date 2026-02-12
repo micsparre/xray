@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
-body {
+html, body {
   margin: 0;
   padding: 0;
+  background-color: #09090b;
   font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -10,7 +11,7 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #334155 transparent;
+  scrollbar-color: #3f3f46 transparent;
 }
 
 /* Fade-in animation for content transitions */
@@ -30,8 +31,8 @@ body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(59, 130, 246, 0.3); }
-  50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
+  0%, 100% { box-shadow: 0 0 8px rgba(161, 161, 170, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(161, 161, 170, 0.6); }
 }
 
 .animate-fade-in {

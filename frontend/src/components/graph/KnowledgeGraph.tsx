@@ -119,7 +119,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
 
       const baseAlpha = selectedNode ? (isHighlighted ? 0.8 : 0.05) : 0.3;
       ctx.globalAlpha = baseAlpha * animProgress;
-      ctx.strokeStyle = isHighlighted ? depthColor(depth) : '#475569';
+      ctx.strokeStyle = isHighlighted ? depthColor(depth) : '#52525b';
       ctx.lineWidth = Math.max(0.5, (link.weight || 0.1) * 3);
 
       ctx.beginPath();
@@ -133,13 +133,13 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
   );
 
   return (
-    <div className="relative w-full h-full bg-[#0f172a]">
+    <div className="relative w-full h-full bg-[#09090b]">
       <ForceGraph2D
         ref={fgRef}
         graphData={data}
         width={width}
         height={height}
-        backgroundColor="#0f172a"
+        backgroundColor="#09090b"
         nodeCanvasObject={paintNode}
         linkCanvasObject={paintLink}
         onNodeClick={(node) => onNodeClick(node as GraphNode)}
@@ -159,39 +159,39 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
 
 function GraphLegend() {
   return (
-    <div className="absolute bottom-4 left-4 bg-slate-900/90 backdrop-blur border border-slate-700/50 rounded-lg p-3 text-xs space-y-2">
-      <p className="text-slate-400 font-medium">Legend</p>
+    <div className="absolute bottom-4 left-4 bg-zinc-900/90 backdrop-blur border border-zinc-700/50 rounded-lg p-3 text-xs space-y-2">
+      <p className="text-zinc-400 font-medium">Legend</p>
       <div className="space-y-1">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-blue-500" />
-          <span className="text-slate-300">Contributor</span>
+          <span className="text-zinc-300">Contributor</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-green-500" />
-          <span className="text-slate-300">Module (healthy)</span>
+          <span className="text-zinc-300">Module (healthy)</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-yellow-500" />
-          <span className="text-slate-300">Module (moderate risk)</span>
+          <span className="text-zinc-300">Module (moderate risk)</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-red-500" />
-          <span className="text-slate-300">Module (critical risk)</span>
+          <span className="text-zinc-300">Module (critical risk)</span>
         </div>
       </div>
-      <div className="space-y-1 pt-1 border-t border-slate-700/50">
-        <p className="text-slate-500">Edge = expertise depth</p>
+      <div className="space-y-1 pt-1 border-t border-zinc-700/50">
+        <p className="text-zinc-500">Edge = expertise depth</p>
         <div className="flex items-center gap-2">
           <div className="w-4 h-0.5 bg-purple-500" />
-          <span className="text-slate-400">architect</span>
+          <span className="text-zinc-400">architect</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-0.5 bg-blue-500" />
-          <span className="text-slate-400">deep</span>
+          <div className="w-4 h-0.5 bg-zinc-400" />
+          <span className="text-zinc-400">deep</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-0.5 bg-gray-500" />
-          <span className="text-slate-400">working</span>
+          <span className="text-zinc-400">working</span>
         </div>
       </div>
     </div>

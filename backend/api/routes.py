@@ -7,6 +7,7 @@ from pathlib import Path
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from backend.agents.orchestrator import run_analysis
+from backend.ingestion.clone import repo_slug
 from backend.api.schemas import (
     AnalysisResult,
     AnalyzeRequest,
@@ -63,6 +64,28 @@ async def get_results(job_id: str):
     if job["result"] is None:
         return {"error": "Analysis not complete", "status": job["status"]}
     return job["result"].model_dump()
+
+
+@router.get("/cached")
+async def list_cached():
+    """List all available cached analysis results."""
+    cache_dir = Path("cached_results")
+    if not cache_dir.exists():
+        return []
+    results = []
+    for f in sorted(cache_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True):
+        try:
+            data = json.loads(f.read_text())
+            results.append({
+                "repo_name": data.get("repo_name", f.stem.replace("_", "/")),
+                "repo_url": data.get("repo_url", ""),
+                "total_commits": data.get("total_commits", 0),
+                "total_contributors": data.get("total_contributors", 0),
+                "analyzed_at": f.stat().st_mtime,
+            })
+        except Exception:
+            continue
+    return results
 
 
 @router.get("/cached/{repo_slug:path}")
@@ -146,6 +169,17 @@ async def _run_job(job_id: str, repo_url: str, months: int):
         result = await run_analysis(repo_url, months, on_progress=on_progress)
         job["result"] = result
         job["status"] = JobStatus.complete
+
+        # Persist to disk so results survive refresh/restart
+        try:
+            cache_dir = Path("cached_results")
+            cache_dir.mkdir(exist_ok=True)
+            slug = repo_slug(repo_url)
+            cache_path = cache_dir / f"{slug.replace('/', '_')}.json"
+            cache_path.write_text(json.dumps(result.model_dump(), default=str))
+            logger.info(f"Cached results to {cache_path}")
+        except Exception as cache_err:
+            logger.warning(f"Failed to cache results: {cache_err}")
 
     except Exception as e:
         logger.exception(f"Job {job_id} failed")

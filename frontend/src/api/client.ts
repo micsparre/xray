@@ -22,6 +22,20 @@ export async function getCached(repoSlug: string) {
   return res.json();
 }
 
+export interface CachedRepo {
+  repo_name: string;
+  repo_url: string;
+  total_commits: number;
+  total_contributors: number;
+  analyzed_at: number;
+}
+
+export async function listCached(): Promise<CachedRepo[]> {
+  const res = await fetch(`${API_BASE}/cached`);
+  if (!res.ok) return [];
+  return res.json();
+}
+
 export function createWebSocket(jobId: string): WebSocket {
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const wsUrl = `${protocol}//${window.location.host}${API_BASE}/ws/${jobId}`;

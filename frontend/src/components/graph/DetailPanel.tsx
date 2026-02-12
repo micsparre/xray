@@ -9,17 +9,17 @@ interface Props {
 
 export function DetailPanel({ node, result, onClose }: Props) {
   return (
-    <div className="w-80 bg-slate-900/95 backdrop-blur border-l border-slate-700/50 p-4 overflow-y-auto">
+    <div className="w-80 bg-zinc-900/95 backdrop-blur border-l border-zinc-700/50 p-4 overflow-y-auto">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <span className="text-[10px] uppercase tracking-wider text-slate-500">
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500">
             {node.type}
           </span>
           <h3 className="text-sm font-semibold text-white">{node.label}</h3>
         </div>
         <button
           onClick={onClose}
-          className="text-slate-500 hover:text-white text-lg leading-none"
+          className="text-zinc-500 hover:text-white text-lg leading-none"
         >
           &times;
         </button>
@@ -57,15 +57,15 @@ function ContributorDetail({ node, result }: { node: GraphNode; result: Analysis
 
       {expertiseRecords.length > 0 && (
         <div>
-          <h4 className="text-xs font-medium text-slate-400 mb-2">Expertise (AI-classified)</h4>
+          <h4 className="text-xs font-medium text-zinc-400 mb-2">Expertise (AI-classified)</h4>
           <div className="space-y-1.5">
             {expertiseRecords.map((e) => (
-              <div key={e.pr_number} className="bg-slate-800/50 rounded p-2 text-[11px]">
+              <div key={e.pr_number} className="bg-zinc-800/50 rounded p-2 text-[11px]">
                 <div className="flex justify-between">
-                  <span className="text-slate-300">PR #{e.pr_number}</span>
-                  <span className="text-blue-400">{e.knowledge_depth}</span>
+                  <span className="text-zinc-300">PR #{e.pr_number}</span>
+                  <span className="text-zinc-300">{e.knowledge_depth}</span>
                 </div>
-                <p className="text-slate-500 mt-0.5">{e.summary}</p>
+                <p className="text-zinc-500 mt-0.5">{e.summary}</p>
               </div>
             ))}
           </div>
@@ -74,15 +74,15 @@ function ContributorDetail({ node, result }: { node: GraphNode; result: Analysis
 
       {reviewRecords.length > 0 && (
         <div>
-          <h4 className="text-xs font-medium text-slate-400 mb-2">Review quality</h4>
+          <h4 className="text-xs font-medium text-zinc-400 mb-2">Review quality</h4>
           <div className="space-y-1.5">
             {reviewRecords.map((r, i) => (
-              <div key={i} className="bg-slate-800/50 rounded p-2 text-[11px]">
+              <div key={i} className="bg-zinc-800/50 rounded p-2 text-[11px]">
                 <div className="flex justify-between">
-                  <span className="text-slate-300">PR #{r.pr_number}</span>
+                  <span className="text-zinc-300">PR #{r.pr_number}</span>
                   <span className="text-purple-400">{r.quality}</span>
                 </div>
-                <p className="text-slate-500 mt-0.5">{r.summary}</p>
+                <p className="text-zinc-500 mt-0.5">{r.summary}</p>
               </div>
             ))}
           </div>
@@ -101,7 +101,7 @@ function ModuleDetail({ node, result }: { node: GraphNode; result: AnalysisResul
     <div className="space-y-4">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400">Bus Factor:</span>
+          <span className="text-xs text-zinc-400">Bus Factor:</span>
           <span className={`text-[10px] px-1.5 py-0.5 rounded border ${riskBadgeColor(risk)}`}>
             {risk} ({((node.bus_factor || 0) * 100).toFixed(0)}%)
           </span>
@@ -117,21 +117,21 @@ function ModuleDetail({ node, result }: { node: GraphNode; result: AnalysisResul
 
       {moduleStats && Object.keys(moduleStats.blame_ownership).length > 0 && (
         <div>
-          <h4 className="text-xs font-medium text-slate-400 mb-2">Code Ownership (blame)</h4>
+          <h4 className="text-xs font-medium text-zinc-400 mb-2">Code Ownership (blame)</h4>
           <div className="space-y-1">
             {Object.entries(moduleStats.blame_ownership)
               .sort(([, a], [, b]) => b - a)
               .slice(0, 5)
               .map(([email, pct]) => (
                 <div key={email} className="flex items-center gap-2">
-                  <div className="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                  <div className="flex-1 h-1.5 bg-zinc-700 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-blue-500 rounded-full"
+                      className="h-full bg-zinc-400 rounded-full"
                       style={{ width: `${pct * 100}%` }}
                     />
                   </div>
-                  <span className="text-[10px] text-slate-400 w-20 truncate">{email.split('@')[0]}</span>
-                  <span className="text-[10px] text-slate-500 tabular-nums">{(pct * 100).toFixed(0)}%</span>
+                  <span className="text-[10px] text-zinc-400 w-20 truncate">{email.split('@')[0]}</span>
+                  <span className="text-[10px] text-zinc-500 tabular-nums">{(pct * 100).toFixed(0)}%</span>
                 </div>
               ))}
           </div>
@@ -144,8 +144,8 @@ function ModuleDetail({ node, result }: { node: GraphNode; result: AnalysisResul
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between text-xs">
-      <span className="text-slate-500">{label}</span>
-      <span className="text-slate-200 tabular-nums">{value}</span>
+      <span className="text-zinc-500">{label}</span>
+      <span className="text-zinc-200 tabular-nums">{value}</span>
     </div>
   );
 }

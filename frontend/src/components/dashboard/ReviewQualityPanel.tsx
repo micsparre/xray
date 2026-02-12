@@ -39,17 +39,17 @@ export function ReviewQualityPanel({ reviews }: Props) {
       <h3 className="text-sm font-semibold text-white">Review Quality by Reviewer</h3>
 
       {reviewers.length === 0 ? (
-        <p className="text-xs text-slate-500">No review data available yet.</p>
+        <p className="text-xs text-zinc-500">No review data available yet.</p>
       ) : (
         <div className="space-y-2">
           {reviewers.map((rev) => (
             <div
               key={rev.reviewer}
-              className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-3"
+              className="bg-zinc-800/50 border border-zinc-700/50 rounded-lg p-3"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-slate-200">{rev.reviewer}</span>
-                <span className="text-[10px] text-slate-500">{rev.total} reviews</span>
+                <span className="text-xs font-medium text-zinc-200">{rev.reviewer}</span>
+                <span className="text-[10px] text-zinc-500">{rev.total} reviews</span>
               </div>
 
               {/* Stacked bar */}
@@ -60,7 +60,7 @@ export function ReviewQualityPanel({ reviews }: Props) {
                   const pct = (count / rev.total) * 100;
                   const colors: Record<string, string> = {
                     mentoring: '#a855f7',
-                    thorough: '#3b82f6',
+                    thorough: '#a1a1aa',
                     surface: '#eab308',
                     rubber_stamp: '#ef4444',
                   };

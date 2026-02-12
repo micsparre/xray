@@ -1,8 +1,8 @@
-# Engineering Team X-Ray
+# xray
 
 **Reveal hidden knowledge structures in your engineering team.**
 
-Engineering Team X-Ray analyzes GitHub repositories to uncover invisible team dynamics that no one talks about: who *really* owns the code, where bus factor risks lurk, and what patterns emerge from how your team reviews each other's work.
+xray analyzes GitHub repositories to uncover invisible team dynamics that no one talks about: who *really* owns the code, where bus factor risks lurk, and what patterns emerge from how your team reviews each other's work.
 
 The core differentiator: **Claude Opus 4.6 reads actual code diffs** to understand expertise depth — not just commit counting. It classifies whether a contributor made surface-level changes or architect-level decisions, and whether reviews are thorough mentoring or rubber stamps.
 

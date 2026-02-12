@@ -11,13 +11,13 @@ export function nodeGlowColor(node: GraphNode): string {
     if (node.risk_level === 'moderate') return 'rgba(234, 179, 8, 0.2)';
     return 'rgba(34, 197, 94, 0.2)';
   }
-  return 'rgba(59, 130, 246, 0.3)';
+  return 'rgba(161, 161, 170, 0.3)';
 }
 
 export function depthColor(depth: string): string {
   switch (depth) {
     case 'architect': return '#a855f7';
-    case 'deep': return '#3b82f6';
+    case 'deep': return '#a1a1aa';
     case 'working': return '#6b7280';
     case 'surface': return '#374151';
     default: return '#6b7280';
@@ -37,7 +37,7 @@ export function riskBadgeColor(risk: string): string {
 export function qualityBadgeColor(quality: string): string {
   switch (quality) {
     case 'mentoring': return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
-    case 'thorough': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+    case 'thorough': return 'bg-zinc-500/20 text-zinc-300 border-zinc-500/30';
     case 'surface': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
     case 'rubber_stamp': return 'bg-red-500/20 text-red-400 border-red-500/30';
     default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
