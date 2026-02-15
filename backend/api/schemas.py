@@ -70,6 +70,7 @@ class PRReview(BaseModel):
     author: str
     state: str
     body: str = ""
+    is_bot: bool = False
 
 
 class PRData(BaseModel):
@@ -77,6 +78,7 @@ class PRData(BaseModel):
     title: str
     author: str
     author_email: str = ""
+    is_bot: bool = False
     created_at: str = ""
     merged_at: str | None = None
     additions: int = 0
@@ -112,6 +114,7 @@ ModuleStats.model_rebuild()
 class ContributorStats(BaseModel):
     name: str
     email: str
+    is_bot: bool = False
     total_commits: int = 0
     total_additions: int = 0
     total_deletions: int = 0
@@ -124,7 +127,7 @@ class ContributorStats(BaseModel):
 
 class GraphNode(BaseModel):
     id: str
-    type: str  # "contributor" or "module"
+    type: str  # "contributor", "bot", or "module"
     label: str
     size: float = 1.0
     color: str = "#3b82f6"

@@ -21,6 +21,18 @@ def _parse_dt(s: str) -> datetime | None:
         return None
 
 
+def _is_bot_typename(author: dict | None) -> bool:
+    """Check if a GraphQL author node is a Bot (via __typename)."""
+    if not author:
+        return False
+    return author.get("__typename") == "Bot"
+
+
+def _is_bot_login(login: str) -> bool:
+    """Fallback bot detection by login name pattern."""
+    return "[bot]" in login.lower()
+
+
 def _parse_node(node: dict) -> PRData:
     """Convert a single GraphQL PR node into a PRData object."""
     reviews = [
@@ -28,6 +40,7 @@ def _parse_node(node: dict) -> PRData:
             author=r["author"]["login"] if r.get("author") else "ghost",
             state=r["state"],
             body=r.get("body", ""),
+            is_bot=_is_bot_typename(r.get("author")),
         )
         for r in (node.get("reviews", {}).get("nodes", []) or [])
     ]
@@ -36,11 +49,15 @@ def _parse_node(node: dict) -> PRData:
     if commit_nodes:
         author_email = (commit_nodes[0].get("commit", {}).get("author", {}).get("email") or "")
 
+    author_node = node.get("author")
+    author_login = author_node["login"] if author_node else "ghost"
+
     return PRData(
         number=node["number"],
         title=node["title"],
-        author=node["author"]["login"] if node.get("author") else "ghost",
+        author=author_login,
         author_email=author_email,
+        is_bot=_is_bot_typename(author_node),
         created_at=node.get("createdAt", ""),
         merged_at=node.get("mergedAt"),
         additions=node.get("additions", 0),
@@ -71,7 +88,7 @@ async def fetch_prs(repo_url: str, months: int = 6) -> list[PRData]:
           nodes {
             number
             title
-            author { login }
+            author { login __typename }
             commits(last: 1) {
               nodes { commit { author { email } } }
             }
@@ -85,7 +102,7 @@ async def fetch_prs(repo_url: str, months: int = 6) -> list[PRData]:
             files(first: 50) { nodes { path } }
             reviews(first: 20) {
               nodes {
-                author { login }
+                author { login __typename }
                 state
                 body
               }
@@ -187,17 +204,20 @@ async def _fetch_prs_rest_fallback(slug: str, months: int) -> list[PRData]:
 
         reviews = [
             PRReview(
-                author=r.get("author", {}).get("login", "ghost") if isinstance(r.get("author"), dict) else "ghost",
+                author=(r_login := r.get("author", {}).get("login", "ghost") if isinstance(r.get("author"), dict) else "ghost"),
                 state=r.get("state", ""),
                 body=r.get("body", ""),
+                is_bot=_is_bot_login(r_login),
             )
             for r in (item.get("reviews", []) or [])
         ]
         author = item.get("author", {})
+        author_login = author.get("login", "ghost") if isinstance(author, dict) else "ghost"
         prs.append(PRData(
             number=item["number"],
             title=item.get("title", ""),
-            author=author.get("login", "ghost") if isinstance(author, dict) else "ghost",
+            author=author_login,
+            is_bot=_is_bot_login(author_login),
             created_at=item.get("createdAt", ""),
             merged_at=item.get("mergedAt"),
             additions=item.get("additions", 0),

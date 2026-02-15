@@ -5,16 +5,17 @@ import type { AppState, AppAction, WSMessage } from '../types';
 type Tab = AppState['activeTab'];
 const VALID_TABS: Tab[] = ['graph', 'dashboard', 'insights'];
 
-function parseRoute(): { repoSlug: string | null; tab: Tab } {
+function parseRoute(): { repoSlug: string | null; tab: Tab; page: string | null } {
   const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
-  if (!path) return { repoSlug: null, tab: 'graph' };
+  if (!path) return { repoSlug: null, tab: 'graph', page: null };
+  if (path === 'how-it-works') return { repoSlug: null, tab: 'graph', page: 'how-it-works' };
   const parts = path.split('/');
   if (parts.length >= 2) {
     const slug = `${parts[0]}/${parts[1]}`;
     const tab = (VALID_TABS.includes(parts[2] as Tab) ? parts[2] : 'graph') as Tab;
-    return { repoSlug: slug, tab };
+    return { repoSlug: slug, tab, page: null };
   }
-  return { repoSlug: null, tab: 'graph' };
+  return { repoSlug: null, tab: 'graph', page: null };
 }
 
 function buildPath(repoName: string | null, tab: Tab): string {
@@ -135,8 +136,8 @@ export function useAnalysis() {
   useEffect(() => {
     if (initialLoadDone.current) return;
     initialLoadDone.current = true;
-    const { repoSlug } = parseRoute();
-    if (repoSlug) {
+    const { repoSlug, page } = parseRoute();
+    if (repoSlug && !page) {
       // Convert "owner/repo" to "owner_repo" for the cached API
       const slug = repoSlug.replace('/', '_');
       getCached(slug).then((data) => {
@@ -158,8 +159,8 @@ export function useAnalysis() {
   // Handle browser back/forward
   useEffect(() => {
     const onPopState = () => {
-      const { repoSlug, tab } = parseRoute();
-      if (!repoSlug) {
+      const { repoSlug, tab, page } = parseRoute();
+      if (page || !repoSlug) {
         wsRef.current?.close();
         dispatch({ type: 'RESET' });
         return;

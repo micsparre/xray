@@ -82,7 +82,7 @@ export function BusFactorPanel({ modules, contributors }: Props) {
                         risk === 'critical'
                           ? '#ef4444'
                           : risk === 'high'
-                          ? '#f97316'
+                          ? '#c15f3c'
                           : risk === 'moderate'
                           ? '#eab308'
                           : '#22c55e',

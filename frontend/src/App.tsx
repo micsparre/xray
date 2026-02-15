@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { Header } from './components/layout/Header';
 import { RepoInput } from './components/input/RepoInput';
@@ -8,13 +8,39 @@ import { DetailPanel } from './components/graph/DetailPanel';
 import { BusFactorPanel } from './components/dashboard/BusFactorPanel';
 import { ReviewQualityPanel } from './components/dashboard/ReviewQualityPanel';
 import { InsightCards } from './components/dashboard/InsightCards';
+import { HowItWorks } from './components/pages/HowItWorks';
 import { useAnalysis } from './hooks/useAnalysis';
+
+function getInitialPage(): string | null {
+  const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
+  if (path === 'how-it-works') return 'how-it-works';
+  return null;
+}
 
 function App() {
   const { state, analyze, loadCached, selectNode, setTab, reset } = useAnalysis();
   const mainRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activePage, setActivePage] = useState<string | null>(getInitialPage);
+
+  const navigateTo = useCallback((path: string) => {
+    const normalized = path.replace(/^\/+|\/+$/g, '');
+    const page = normalized === 'how-it-works' ? 'how-it-works' : null;
+    setActivePage(page);
+    if (!page) reset();
+    window.history.pushState(null, '', path);
+  }, [reset]);
+
+  // Sync activePage on browser back/forward
+  useEffect(() => {
+    const onPopState = () => {
+      const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
+      setActivePage(path === 'how-it-works' ? 'how-it-works' : null);
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
 
   useEffect(() => {
     const el = mainRef.current;
@@ -38,7 +64,7 @@ function App() {
 
   return (
     <div className="h-screen flex flex-col bg-zinc-950 text-white">
-      <Header />
+      <Header onNavigate={navigateTo} />
 
       {/* Global progress bar */}
       {state.status === 'analyzing' && (
@@ -50,6 +76,9 @@ function App() {
         </div>
       )}
 
+      {activePage === 'how-it-works' ? (
+        <HowItWorks onNavigateHome={() => navigateTo('/')} />
+      ) : (
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
         <aside
@@ -266,6 +295,7 @@ function App() {
           </div>
         </main>
       </div>
+      )}
     </div>
   );
 }

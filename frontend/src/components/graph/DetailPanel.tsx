@@ -9,6 +9,7 @@ interface Props {
 
 export function DetailPanel({ node, result, onClose }: Props) {
   const isModule = node.type === 'module';
+  const isBot = node.type === 'bot';
 
   return (
     <div className="w-80 h-full bg-zinc-900/95 backdrop-blur-lg border-l border-zinc-800 overflow-y-auto flex flex-col">
@@ -22,7 +23,7 @@ export function DetailPanel({ node, result, onClose }: Props) {
                 style={{ backgroundColor: node.color }}
               />
               <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-medium">
-                {node.type}
+                {isBot ? 'bot' : node.type}
               </span>
             </div>
             <h3 className="text-[15px] font-semibold text-white leading-tight truncate">
@@ -45,14 +46,14 @@ export function DetailPanel({ node, result, onClose }: Props) {
         {isModule ? (
           <ModuleDetail node={node} result={result} />
         ) : (
-          <ContributorDetail node={node} result={result} />
+          <ContributorDetail node={node} result={result} isBot={isBot} />
         )}
       </div>
     </div>
   );
 }
 
-function ContributorDetail({ node, result }: { node: GraphNode; result: AnalysisResult }) {
+function ContributorDetail({ node, result, isBot }: { node: GraphNode; result: AnalysisResult; isBot?: boolean }) {
   const email = node.id.replace('c:', '');
   const contributor = result.contributors.find((c) => c.email === email);
   const repoBase = result.repo_url.replace(/\.git$/, '').replace(/\/$/, '');
@@ -79,6 +80,12 @@ function ContributorDetail({ node, result }: { node: GraphNode; result: Analysis
 
   return (
     <div className="space-y-5">
+      {isBot && (
+        <div className="flex items-center gap-2 px-2.5 py-1.5 bg-violet-500/10 border border-violet-500/20 rounded-lg">
+          <span className="text-[11px] text-violet-400 font-medium">Automated account</span>
+          <span className="text-[10px] text-zinc-500">Excluded from bus factor</span>
+        </div>
+      )}
       {contributor && (
         <div className="grid grid-cols-2 gap-2">
           <StatCard label="Commits" value={contributor.total_commits.toLocaleString()} />
@@ -200,7 +207,7 @@ function OwnershipSection({ moduleStats }: { moduleStats: ModuleStats }) {
                 className="h-full rounded-full transition-all duration-500"
                 style={{
                   width: `${pct * 100}%`,
-                  backgroundColor: pct > 0.5 ? '#f97316' : pct > 0.25 ? '#a1a1aa' : '#52525b',
+                  backgroundColor: pct > 0.5 ? '#c15f3c' : pct > 0.25 ? '#a1a1aa' : '#52525b',
                 }}
               />
             </div>

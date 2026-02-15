@@ -63,16 +63,18 @@ def build_graph(
 
     max_commits = max((c.total_commits for c in contributors), default=1)
 
-    # Contributor nodes
+    # Contributor nodes (humans and bots get different types/colors)
     for c in contributors:
         size = 3 + (c.total_commits / max_commits) * 12
         expertise_areas = list(expertise_by_email.get(c.email, {}).keys())
+        node_type = "bot" if c.is_bot else "contributor"
+        node_color = "#8b5cf6" if c.is_bot else "#3b82f6"  # violet for bots, blue for humans
         nodes.append(GraphNode(
             id=f"c:{c.email}",
-            type="contributor",
+            type=node_type,
             label=c.name,
             size=size,
-            color="#3b82f6",  # blue
+            color=node_color,
             total_commits=c.total_commits,
             total_lines=c.total_additions + c.total_deletions,
             expertise_areas=expertise_areas,

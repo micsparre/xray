@@ -7,16 +7,17 @@ export function nodeColor(node: GraphNode): string {
 export function nodeGlowColor(node: GraphNode): string {
   if (node.type === 'module') {
     if (node.risk_level === 'critical') return 'rgba(239, 68, 68, 0.25)';
-    if (node.risk_level === 'high') return 'rgba(249, 115, 22, 0.25)';
+    if (node.risk_level === 'high') return 'rgba(193, 95, 60, 0.25)';
     if (node.risk_level === 'moderate') return 'rgba(234, 179, 8, 0.15)';
     return 'rgba(34, 197, 94, 0.15)';
   }
+  if (node.type === 'bot') return 'rgba(139, 92, 246, 0.2)';
   return 'rgba(161, 161, 170, 0.2)';
 }
 
 export function depthColor(depth: string): string {
   switch (depth) {
-    case 'architect': return '#fb923c';  // orange-400
+    case 'architect': return '#d47d57';  // orange-400
     case 'deep': return '#7dd3fc';       // sky-300 — cool blue, clearly distinct
     case 'working': return '#52525b';    // zinc-600 — subtle baseline
     case 'surface': return '#3f3f46';    // zinc-700
@@ -26,7 +27,7 @@ export function depthColor(depth: string): string {
 
 export function depthGlowColor(depth: string): string {
   switch (depth) {
-    case 'architect': return 'rgba(251, 146, 60, 0.35)';  // orange glow
+    case 'architect': return 'rgba(212, 125, 87, 0.35)';  // orange glow
     case 'deep': return 'rgba(125, 211, 252, 0.18)';       // sky glow
     default: return 'transparent';
   }

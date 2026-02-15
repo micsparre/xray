@@ -14,7 +14,7 @@ interface ReviewerSummary {
 const QUALITIES = ['mentoring', 'thorough', 'surface', 'rubber_stamp'] as const;
 
 const QUALITY_META: Record<string, { color: string; label: string }> = {
-  mentoring: { color: '#fb923c', label: 'Mentoring' },
+  mentoring: { color: '#d47d57', label: 'Mentoring' },
   thorough: { color: '#a1a1aa', label: 'Thorough' },
   surface: { color: '#eab308', label: 'Surface' },
   rubber_stamp: { color: '#ef4444', label: 'Rubber stamp' },

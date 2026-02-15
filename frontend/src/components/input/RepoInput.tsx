@@ -34,9 +34,15 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
     if (status === 'complete') refreshCached();
   }, [status, refreshCached]);
 
+  // Check if the current URL matches the active (already-loaded) analysis
+  const isReanalyze = !!activeRepoName && !!activeRepoUrl && url.trim() === activeRepoUrl;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (url.trim()) {
+    if (!url.trim()) return;
+    if (isReanalyze) {
+      setConfirm({ action: 'reanalyze', repoName: activeRepoName });
+    } else {
       onAnalyze(url.trim(), months);
     }
   };
@@ -57,8 +63,12 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
     if (!confirm) return;
     if (confirm.action === 'delete') {
       handleDelete(confirm.repoName);
-    } else if (confirm.action === 'reanalyze' && confirm.repo) {
-      handleReanalyze(confirm.repo);
+    } else if (confirm.action === 'reanalyze') {
+      if (confirm.repo) {
+        handleReanalyze(confirm.repo);
+      } else if (url.trim()) {
+        onAnalyze(url.trim(), months);
+      }
     }
     setConfirm(null);
   };
@@ -103,9 +113,9 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
         <button
           type="submit"
           disabled={!url.trim() || isAnalyzing}
-          className="w-full py-2.5 bg-white hover:bg-zinc-200 disabled:bg-zinc-700 disabled:text-zinc-500 text-zinc-900 text-sm font-medium rounded-lg transition-colors"
+          className="w-full py-2.5 bg-zinc-700 hover:bg-zinc-600 disabled:bg-zinc-800 disabled:text-zinc-600 text-zinc-200 text-sm font-medium rounded-lg transition-colors border border-zinc-600 hover:border-zinc-500"
         >
-          {isAnalyzing ? 'Analyzing...' : 'Analyze Repository'}
+          {isAnalyzing ? 'Analyzing...' : isReanalyze ? 'Re-analyze' : 'Analyze Repository'}
         </button>
       </form>
 

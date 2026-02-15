@@ -31,7 +31,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [typeFilters, setTypeFilters] = useState<Set<NodeTypeFilter>>(() => new Set(['contributor', 'module']));
+  const [typeFilters, setTypeFilters] = useState<Set<NodeTypeFilter>>(() => new Set(['contributor', 'module', 'bot']));
   const [riskFilters, setRiskFilters] = useState<Set<RiskLevel>>(() => new Set(ALL_RISK_LEVELS));
 
   // Debounce search query (150ms)
@@ -42,7 +42,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
 
   // Compute match set — O(1) lookups in paint callbacks
   const matchSetRef = useRef<Set<string>>(new Set());
-  const searchActive = debouncedQuery.length > 0 || !typeFilters.has('contributor') || !typeFilters.has('module') || riskFilters.size < ALL_RISK_LEVELS.length;
+  const searchActive = debouncedQuery.length > 0 || !typeFilters.has('contributor') || !typeFilters.has('module') || !typeFilters.has('bot') || riskFilters.size < ALL_RISK_LEVELS.length;
 
   const matchCount = useMemo(() => {
     const set = new Set<string>();
@@ -72,11 +72,12 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
     return set.size;
   }, [data.nodes, debouncedQuery, typeFilters, riskFilters]);
 
+  const ALL_TYPES: NodeTypeFilter[] = ['contributor', 'module', 'bot'];
   const toggleType = useCallback((t: NodeTypeFilter) => {
     setTypeFilters(prev => {
       // If this is the only active filter, reset to show all
       if (prev.has(t) && prev.size === 1) {
-        return new Set(['contributor', 'module'] as NodeTypeFilter[]);
+        return new Set(ALL_TYPES);
       }
       // Otherwise, isolate to just this type
       return new Set([t]);
@@ -373,7 +374,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
       if (searchActive && isSearchMatch) {
         ctx.beginPath();
         ctx.arc(node.x!, node.y!, drawSize + 2, 0, 2 * Math.PI);
-        ctx.strokeStyle = 'rgba(251, 191, 36, 0.6)';
+        ctx.strokeStyle = 'rgba(212, 155, 90, 0.6)';
         ctx.lineWidth = 1.5;
         ctx.stroke();
       }
@@ -615,13 +616,14 @@ function GraphLegend() {
       <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">Legend</p>
       <div className="space-y-1.5">
         <LegendDot color="bg-blue-500" label="Contributor" />
+        <LegendDot color="bg-violet-500" label="Bot" />
         <LegendDot color="bg-green-500" label="Module (healthy)" />
         <LegendDot color="bg-yellow-500" label="Module (moderate risk)" />
         <LegendDot color="bg-red-500" label="Module (critical risk)" />
       </div>
       <div className="space-y-1.5 pt-2 border-t border-zinc-700/40">
         <p className="text-[10px] text-zinc-600">Edge = expertise depth</p>
-        <LegendEdge color="#fb923c" glow="rgba(251,146,60,0.35)" thickness={3} label="architect" />
+        <LegendEdge color="#d47d57" glow="rgba(212,125,87,0.35)" thickness={3} label="architect" />
         <LegendEdge color="#7dd3fc" glow="rgba(125,211,252,0.18)" thickness={2} label="deep" />
         <LegendEdge color="#52525b" thickness={1.5} label="working" />
       </div>

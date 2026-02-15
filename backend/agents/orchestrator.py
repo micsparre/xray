@@ -76,9 +76,13 @@ async def run_analysis(
     result.total_prs = len(prs)
 
     # Build GitHub login → git email mapping from PR commit data
+    # Also collect emails of known bot accounts (from GraphQL __typename)
+    bot_emails: set[str] = set()
     for pr in prs:
         if pr.author_email and pr.author != "ghost":
             result.login_to_email.setdefault(pr.author, pr.author_email)
+            if pr.is_bot:
+                bot_emails.add(pr.author_email)
 
     # Blame (non-fatal — some files may fail)
     await emit(WSMessage(type="progress", stage=1, message="Running git blame...", progress=0.7))
@@ -94,11 +98,11 @@ async def run_analysis(
     # ── Stage 2: Statistical Analysis ──
     await emit(WSMessage(type="progress", stage=2, message="Building contributor statistics...", progress=0.0))
 
-    contributors = build_contributor_stats(commits, result.login_to_email)
+    contributors = build_contributor_stats(commits, result.login_to_email, bot_emails=bot_emails)
     result.contributors = contributors
-    result.total_contributors = len(contributors)
+    result.total_contributors = len([c for c in contributors if not c.is_bot])
 
-    modules = build_module_stats(commits, blame_results, result.login_to_email)
+    modules = build_module_stats(commits, blame_results, result.login_to_email, bot_emails=bot_emails)
     result.modules = modules
 
     graph = build_graph(contributors, modules)

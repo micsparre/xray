@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 
-export type NodeTypeFilter = 'contributor' | 'module';
+export type NodeTypeFilter = 'contributor' | 'module' | 'bot';
 export type RiskLevel = 'critical' | 'high' | 'moderate' | 'low';
 
 interface Props {
@@ -72,6 +72,12 @@ export const GraphSearchBar = forwardRef<HTMLInputElement, Props>(
             active={typeFilters.has('module')}
             activeColor="bg-green-500/20 text-green-400 border-green-500/40"
             onClick={() => onToggleType('module')}
+          />
+          <FilterChip
+            label="Bots"
+            active={typeFilters.has('bot')}
+            activeColor="bg-violet-500/20 text-violet-400 border-violet-500/40"
+            onClick={() => onToggleType('bot')}
           />
 
           {/* Risk level pills — only when Modules is active */}

@@ -16,6 +16,14 @@ from backend.api.schemas import (
 # Matches GitHub noreply emails: "id+user@users.noreply.github.com" or "user@users.noreply.github.com"
 _NOREPLY_RE = re.compile(r'^(?:\d+\+)?(.+)@users\.noreply\.github\.com$', re.IGNORECASE)
 
+# Heuristic bot detection for git commit authors (complements GraphQL __typename)
+_BOT_NAME_PATTERNS = re.compile(r'\[bot\]|github-actions|dependabot|renovate|greenkeeper|semantic-release', re.IGNORECASE)
+
+
+def is_bot_contributor(name: str, email: str) -> bool:
+    """Detect bot contributors from git commit name/email patterns."""
+    return bool(_BOT_NAME_PATTERNS.search(name) or _BOT_NAME_PATTERNS.search(email))
+
 
 def build_email_resolver(login_to_email: dict[str, str]) -> Callable[[str], str]:
     """Build a function that resolves noreply emails to real emails via the login map."""
@@ -46,9 +54,11 @@ def file_to_module(path: str) -> str:
 def build_contributor_stats(
     commits: list[CommitRecord],
     login_to_email: dict[str, str] | None = None,
+    bot_emails: set[str] | None = None,
 ) -> list[ContributorStats]:
     """Aggregate per-contributor statistics."""
     resolve = build_email_resolver(login_to_email or {})
+    _bot_emails = bot_emails or set()
     by_author: dict[str, ContributorStats] = {}
 
     for c in commits:
@@ -56,9 +66,11 @@ def build_contributor_stats(
         if key not in by_author:
             # Use the original name, but prefer a non-username-style name
             name = c.author_name
+            bot = is_bot_contributor(c.author_name, c.author_email) or key in _bot_emails
             by_author[key] = ContributorStats(
                 name=name,
                 email=key,
+                is_bot=bot,
                 first_commit=c.date,
                 last_commit=c.date,
             )
@@ -89,13 +101,22 @@ def build_module_stats(
     commits: list[CommitRecord],
     blame_results: list[BlameResult],
     login_to_email: dict[str, str] | None = None,
+    bot_emails: set[str] | None = None,
 ) -> list[ModuleStats]:
     """Build contributor x module matrix with bus factor."""
     resolve = build_email_resolver(login_to_email or {})
+    _bot_emails = bot_emails or set()
     modules: dict[str, ModuleStats] = {}
+
+    # Track which emails are bots (from both PR data and commit heuristics)
+    all_bot_emails: set[str] = set(_bot_emails)
 
     # Aggregate commit data per module
     for c in commits:
+        author = resolve(c.author_email)
+        if is_bot_contributor(c.author_name, c.author_email):
+            all_bot_emails.add(author)
+
         for f in c.files:
             mod = file_to_module(f.path)
             if mod not in modules:
@@ -103,7 +124,6 @@ def build_module_stats(
             m = modules[mod]
             m.total_commits += 1
 
-            author = resolve(c.author_email)
             if author not in m.contributors:
                 m.contributors[author] = ContributorModuleStats()
             cs = m.contributors[author]
@@ -120,35 +140,39 @@ def build_module_stats(
         m.total_lines += br.total_lines
         for entry in br.entries:
             author = resolve(entry.author_email)
+            if is_bot_contributor(entry.author_name, entry.author_email):
+                all_bot_emails.add(author)
             if author not in m.contributors:
                 m.contributors[author] = ContributorModuleStats()
             m.contributors[author].blame_lines += entry.lines
             pct = entry.lines / br.total_lines if br.total_lines > 0 else 0
             m.blame_ownership[author] = m.blame_ownership.get(author, 0) + pct
 
-    # Normalize blame ownership and compute bus factor
+    # Normalize blame ownership and compute bus factor (excluding bots)
     for m in modules.values():
         total_ownership = sum(m.blame_ownership.values())
         if total_ownership > 0:
             for k in m.blame_ownership:
                 m.blame_ownership[k] /= total_ownership
-        m.bus_factor = compute_bus_factor(m)
+        m.bus_factor = compute_bus_factor(m, exclude_emails=all_bot_emails)
 
     return sorted(modules.values(), key=lambda m: -m.total_commits)
 
 
-def compute_bus_factor(module: ModuleStats) -> float:
+def compute_bus_factor(module: ModuleStats, exclude_emails: set[str] | None = None) -> float:
     """Compute bus factor using contribution concentration (Gini coefficient).
 
     Returns 0-1 where 0 = single contributor (highest risk), 1 = evenly distributed.
     Uses blame ownership as the primary signal when available, with commit
-    counts as fallback.
+    counts as fallback. Excludes bot contributors from the calculation.
     """
+    _exclude = exclude_emails or set()
+
     # Prefer blame ownership (more accurate picture of who "owns" the code)
     if module.blame_ownership:
-        weights = list(module.blame_ownership.values())
+        weights = [v for k, v in module.blame_ownership.items() if k not in _exclude]
     else:
-        weights = [cs.commits for cs in module.contributors.values()]
+        weights = [cs.commits for k, cs in module.contributors.items() if k not in _exclude]
 
     if not weights or sum(weights) == 0:
         return 0.0

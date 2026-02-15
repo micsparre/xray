@@ -1,7 +1,7 @@
 // --- Graph types ---
 export interface GraphNode {
   id: string;
-  type: 'contributor' | 'module';
+  type: 'contributor' | 'module' | 'bot';
   label: string;
   size: number;
   color: string;
@@ -39,6 +39,7 @@ export interface ContributorModuleStats {
 export interface ContributorStats {
   name: string;
   email: string;
+  is_bot: boolean;
   total_commits: number;
   total_additions: number;
   total_deletions: number;
