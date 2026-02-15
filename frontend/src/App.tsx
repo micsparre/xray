@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { Header } from './components/layout/Header';
 import { RepoInput } from './components/input/RepoInput';
 import { AnalysisProgress } from './components/input/AnalysisProgress';
@@ -13,6 +14,7 @@ function App() {
   const { state, analyze, loadCached, selectNode, setTab, reset } = useAnalysis();
   const mainRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     const el = mainRef.current;
@@ -42,7 +44,7 @@ function App() {
       {state.status === 'analyzing' && (
         <div className="h-0.5 bg-zinc-800 relative">
           <div
-            className="h-full bg-gradient-to-r from-purple-500 via-fuchsia-500 to-purple-500 transition-all duration-700 ease-out"
+            className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 transition-all duration-700 ease-out"
             style={{ width: `${overallProgress * 100}%` }}
           />
         </div>
@@ -50,40 +52,69 @@ function App() {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-72 border-r border-white/10 bg-zinc-900/50 flex flex-col overflow-y-auto">
-          <div className="p-4 space-y-6">
-            <RepoInput
-              onAnalyze={analyze}
-              onLoadCached={loadCached}
-              status={state.status}
-            />
+        <aside
+          className="flex-shrink-0 border-r border-white/[0.06] bg-zinc-900/50 flex flex-col transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden"
+          style={{ width: sidebarOpen ? 288 : 48 }}
+        >
+          {/* Sidebar header with toggle */}
+          <div className={`flex items-center h-10 flex-shrink-0 ${sidebarOpen ? 'justify-end px-3' : 'justify-center'}`}>
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="flex items-center justify-center w-7 h-7 rounded-md text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06] transition-colors"
+              title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            >
+              {sidebarOpen ? <PanelLeftClose size={15} /> : <PanelLeftOpen size={15} />}
+            </button>
+          </div>
 
-            {state.status === 'analyzing' && (
-              <AnalysisProgress
-                currentStage={state.currentStage}
-                stageProgress={state.stageProgress}
-                stageMessage={state.stageMessage}
+          {/* Sidebar content — fixed width, fades with collapse */}
+          <div
+            className="flex-1 overflow-y-auto overflow-x-hidden transition-opacity duration-200"
+            style={{ width: 288, opacity: sidebarOpen ? 1 : 0, pointerEvents: sidebarOpen ? 'auto' : 'none' }}
+          >
+            <div className="px-4 pb-4 space-y-6">
+              <RepoInput
+                onAnalyze={analyze}
+                onLoadCached={loadCached}
+                status={state.status}
+                analyzingRepoName={state.analyzingRepoName}
+                activeRepoName={state.result?.repo_name ?? null}
+                activeRepoUrl={state.result?.repo_url ?? null}
+                overviewSlot={
+                  <>
+                    {state.status === 'analyzing' && (
+                      <AnalysisProgress
+                        currentStage={state.currentStage}
+                        stageProgress={state.stageProgress}
+                        stageMessage={state.stageMessage}
+                      />
+                    )}
+
+                    {hasResult && (
+                      <div className="space-y-2 animate-fade-in">
+                        <h3 className="text-xs font-medium text-zinc-400">Overview</h3>
+                        <div className="grid grid-cols-3 gap-2">
+                          <StatCard label="Commits" value={state.result!.total_commits} />
+                          <StatCard label="Contributors" value={state.result!.total_contributors} />
+                          <StatCard label="PRs" value={state.result!.total_prs} />
+                        </div>
+                        {state.status === 'complete' && (
+                          <button
+                            onClick={reset}
+                            className="w-full flex items-center justify-center gap-1.5 text-xs text-zinc-500 hover:text-white py-1 transition-colors"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="flex-shrink-0">
+                              <path d="M10 2L4 8l6 6" />
+                            </svg>
+                            Back to home
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </>
+                }
               />
-            )}
-
-            {hasResult && (
-              <div className="space-y-2 animate-fade-in">
-                <h3 className="text-xs font-medium text-zinc-400">Overview</h3>
-                <div className="grid grid-cols-3 gap-2">
-                  <StatCard label="Commits" value={state.result!.total_commits} />
-                  <StatCard label="Contributors" value={state.result!.total_contributors} />
-                  <StatCard label="PRs" value={state.result!.total_prs} />
-                </div>
-                {state.status === 'complete' && (
-                  <button
-                    onClick={reset}
-                    className="w-full text-xs text-zinc-500 hover:text-white py-1 transition-colors"
-                  >
-                    Reset
-                  </button>
-                )}
-              </div>
-            )}
+            </div>
           </div>
         </aside>
 
@@ -116,13 +147,13 @@ function App() {
             </div>
           )}
 
-          <div className="flex-1 flex overflow-hidden">
-            <div ref={mainRef} className="flex-1 overflow-auto">
+          <div className="flex-1 relative overflow-hidden">
+            <div ref={mainRef} className="absolute inset-0 overflow-auto">
               {/* Empty state */}
               {!hasResult && state.status !== 'analyzing' && state.status !== 'error' && (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center max-w-lg animate-fade-in">
-                    <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-zinc-600/20 to-purple-500/20 border border-zinc-500/20 flex items-center justify-center animate-pulse-glow">
+                    <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-zinc-600/20 to-orange-500/20 border border-zinc-500/20 flex items-center justify-center animate-pulse-glow">
                       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-zinc-300">
                         <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
                         <path d="M2 12h4M18 12h4M12 2v4M12 18v4" />
@@ -191,7 +222,7 @@ function App() {
                   data={state.result!.graph}
                   selectedNode={state.selectedNode}
                   onNodeClick={selectNode}
-                  width={dimensions.width - (state.selectedNode ? 320 : 0)}
+                  width={dimensions.width}
                   height={dimensions.height}
                 />
               )}
@@ -199,7 +230,7 @@ function App() {
               {/* Dashboard tab */}
               {hasResult && state.activeTab === 'dashboard' && (
                 <div className="p-6 space-y-8 animate-fade-in">
-                  <BusFactorPanel modules={state.result!.modules} />
+                  <BusFactorPanel modules={state.result!.modules} contributors={state.result!.contributors} />
                   <ReviewQualityPanel reviews={state.result!.review_classifications} />
                 </div>
               )}
@@ -222,9 +253,9 @@ function App() {
               )}
             </div>
 
-            {/* Detail Panel (slide-in) */}
+            {/* Detail Panel (overlay, slide-in from right) */}
             {state.selectedNode && hasResult && state.activeTab === 'graph' && (
-              <div className="animate-slide-in-right">
+              <div className="absolute top-0 right-0 bottom-0 z-10 animate-slide-in-right">
                 <DetailPanel
                   node={state.selectedNode}
                   result={state.result!}

@@ -1,15 +1,28 @@
+from __future__ import annotations
+
 import asyncio
 import os
+import re
 import shutil
 from pathlib import Path
+from typing import Callable, Awaitable
 
 from backend.config import CLONE_BASE_DIR
+
+ProgressCallback = Callable[[str], Awaitable[None]]
+
+# Matches git progress lines like "Receiving objects:  45% (12345/27000), 150.00 MiB | 5.00 MiB/s"
+_PROGRESS_RE = re.compile(
+    r'(Receiving objects|Resolving deltas|Counting objects|Compressing objects|remote: Counting objects|remote: Compressing objects):\s+(\d+)%'
+)
 
 
 def repo_slug(repo_url: str) -> str:
     """Extract 'owner/repo' from a GitHub URL."""
-    url = repo_url.rstrip("/").removesuffix(".git")
-    parts = url.split("/")
+    url = repo_url.strip().rstrip("/").removesuffix(".git")
+    parts = [p for p in url.split("/") if p]
+    if len(parts) < 2:
+        raise ValueError(f"Cannot parse owner/repo from URL: {repo_url!r}")
     return f"{parts[-2]}/{parts[-1]}"
 
 
@@ -18,7 +31,11 @@ def repo_local_path(repo_url: str) -> Path:
     return Path(CLONE_BASE_DIR) / slug.replace("/", "_")
 
 
-async def clone_repo(repo_url: str, force: bool = False) -> Path:
+async def clone_repo(
+    repo_url: str,
+    force: bool = False,
+    on_progress: ProgressCallback | None = None,
+) -> Path:
     """Clone a repo (full clone so git log/blame don't trigger lazy fetches)."""
     dest = repo_local_path(repo_url)
 
@@ -36,6 +53,8 @@ async def clone_repo(repo_url: str, force: bool = False) -> Path:
             # Fall through to full clone below
         else:
             # Full clone exists — just pull latest
+            if on_progress:
+                await on_progress("Updating existing clone...")
             proc = await asyncio.create_subprocess_exec(
                 "git", "-C", str(dest), "pull", "--ff-only",
                 stdout=asyncio.subprocess.PIPE,
@@ -50,12 +69,47 @@ async def clone_repo(repo_url: str, force: bool = False) -> Path:
     os.makedirs(dest.parent, exist_ok=True)
 
     proc = await asyncio.create_subprocess_exec(
-        "git", "clone", repo_url, str(dest),
+        "git", "clone", "--progress", repo_url, str(dest),
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
-    _, stderr = await proc.communicate()
+
+    # Read stderr incrementally to capture git progress
+    stderr_chunks: list[bytes] = []
+    if proc.stderr and on_progress:
+        buf = b""
+        while True:
+            chunk = await proc.stderr.read(512)
+            if not chunk:
+                break
+            stderr_chunks.append(chunk)
+            buf += chunk
+            # Git uses \r to overwrite progress lines, \n for final lines
+            while b"\r" in buf or b"\n" in buf:
+                # Split on whichever delimiter comes first
+                cr = buf.find(b"\r")
+                nl = buf.find(b"\n")
+                if cr == -1:
+                    idx, skip = nl, 1
+                elif nl == -1:
+                    idx, skip = cr, 1
+                else:
+                    idx, skip = min(cr, nl), 1
+                line = buf[:idx].decode(errors="replace").strip()
+                buf = buf[idx + skip:]
+                if line:
+                    m = _PROGRESS_RE.search(line)
+                    if m:
+                        phase = m.group(1).replace("remote: ", "")
+                        pct = m.group(2)
+                        await on_progress(f"{phase}: {pct}%")
+        await proc.wait()
+    else:
+        _, stderr_data = await proc.communicate()
+        stderr_chunks.append(stderr_data)
+
     if proc.returncode != 0:
-        raise RuntimeError(f"git clone failed: {stderr.decode()}")
+        full_stderr = b"".join(stderr_chunks).decode(errors="replace")
+        raise RuntimeError(f"git clone failed: {full_stderr}")
 
     return dest

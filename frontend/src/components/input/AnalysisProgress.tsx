@@ -50,17 +50,19 @@ export function AnalysisProgress({ currentStage, stageProgress, stageMessage }: 
         })}
       </div>
 
-      {currentStage > 0 && (
-        <div className="space-y-1">
-          <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full transition-all duration-500"
-              style={{ width: `${stageProgress * 100}%` }}
-            />
-          </div>
-          <p className="text-[11px] text-zinc-400 truncate">{stageMessage}</p>
+      <div className="space-y-1">
+        <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+          <div
+            className={`h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-500 ${
+              currentStage === 0 ? 'animate-pulse' : ''
+            }`}
+            style={{ width: currentStage === 0 ? '5%' : `${stageProgress * 100}%` }}
+          />
         </div>
-      )}
+        <p className="text-[11px] text-zinc-400 truncate">
+          {stageMessage || 'Connecting...'}
+        </p>
+      </div>
     </div>
   );
 }

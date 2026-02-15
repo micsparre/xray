@@ -6,21 +6,51 @@ export function nodeColor(node: GraphNode): string {
 
 export function nodeGlowColor(node: GraphNode): string {
   if (node.type === 'module') {
-    if (node.risk_level === 'critical') return 'rgba(239, 68, 68, 0.3)';
-    if (node.risk_level === 'high') return 'rgba(249, 115, 22, 0.3)';
-    if (node.risk_level === 'moderate') return 'rgba(234, 179, 8, 0.2)';
-    return 'rgba(34, 197, 94, 0.2)';
+    if (node.risk_level === 'critical') return 'rgba(239, 68, 68, 0.25)';
+    if (node.risk_level === 'high') return 'rgba(249, 115, 22, 0.25)';
+    if (node.risk_level === 'moderate') return 'rgba(234, 179, 8, 0.15)';
+    return 'rgba(34, 197, 94, 0.15)';
   }
-  return 'rgba(161, 161, 170, 0.3)';
+  return 'rgba(161, 161, 170, 0.2)';
 }
 
 export function depthColor(depth: string): string {
   switch (depth) {
-    case 'architect': return '#a855f7';
-    case 'deep': return '#a1a1aa';
-    case 'working': return '#6b7280';
-    case 'surface': return '#374151';
-    default: return '#6b7280';
+    case 'architect': return '#fb923c';  // orange-400
+    case 'deep': return '#7dd3fc';       // sky-300 — cool blue, clearly distinct
+    case 'working': return '#52525b';    // zinc-600 — subtle baseline
+    case 'surface': return '#3f3f46';    // zinc-700
+    default: return '#52525b';
+  }
+}
+
+export function depthGlowColor(depth: string): string {
+  switch (depth) {
+    case 'architect': return 'rgba(251, 146, 60, 0.35)';  // orange glow
+    case 'deep': return 'rgba(125, 211, 252, 0.18)';       // sky glow
+    default: return 'transparent';
+  }
+}
+
+/** Base width multiplier per depth tier (applied on top of weight) */
+export function depthWidthBonus(depth: string): number {
+  switch (depth) {
+    case 'architect': return 1.8;
+    case 'deep': return 1.2;
+    case 'working': return 0.8;
+    case 'surface': return 0.5;
+    default: return 0.8;
+  }
+}
+
+/** Base alpha per depth tier — subtle by default, prominent on interaction */
+export function depthBaseAlpha(depth: string): number {
+  switch (depth) {
+    case 'architect': return 0.45;
+    case 'deep': return 0.3;
+    case 'working': return 0.22;
+    case 'surface': return 0.08;
+    default: return 0.12;
   }
 }
 
@@ -36,7 +66,7 @@ export function riskBadgeColor(risk: string): string {
 
 export function qualityBadgeColor(quality: string): string {
   switch (quality) {
-    case 'mentoring': return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
+    case 'mentoring': return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
     case 'thorough': return 'bg-zinc-500/20 text-zinc-300 border-zinc-500/30';
     case 'surface': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
     case 'rubber_stamp': return 'bg-red-500/20 text-red-400 border-red-500/30';

@@ -41,24 +41,32 @@ def build_graph(
     nodes: list[GraphNode] = []
     links: list[GraphLink] = []
 
-    # Build expertise lookup: author -> {module -> depth}
-    expertise_lookup: dict[str, dict[str, str]] = {}
+    # Build expertise lookup keyed by email: email -> {module -> depth}
+    # Expertise classifications use GitHub usernames as author, but module
+    # contributors are keyed by git email. Build a username->email mapping.
+    expertise_by_email: dict[str, dict[str, str]] = {}
     if expertise:
+        username_to_email = _build_username_email_map(
+            contributors, [ec.author for ec in expertise]
+        )
+
         for ec in expertise:
-            if ec.author not in expertise_lookup:
-                expertise_lookup[ec.author] = {}
+            email = username_to_email.get(ec.author.lower(), "")
+            if not email:
+                continue
+            if email not in expertise_by_email:
+                expertise_by_email[email] = {}
             for mod in ec.modules_touched:
-                current = expertise_lookup[ec.author].get(mod, "surface")
+                current = expertise_by_email[email].get(mod, "surface")
                 if _depth_rank(ec.knowledge_depth) > _depth_rank(current):
-                    expertise_lookup[ec.author][mod] = ec.knowledge_depth
+                    expertise_by_email[email][mod] = ec.knowledge_depth
 
     max_commits = max((c.total_commits for c in contributors), default=1)
 
     # Contributor nodes
     for c in contributors:
         size = 3 + (c.total_commits / max_commits) * 12
-        expertise_areas = list(expertise_lookup.get(c.name, {}).keys()) or \
-                          list(expertise_lookup.get(c.email, {}).keys())
+        expertise_areas = list(expertise_by_email.get(c.email, {}).keys())
         nodes.append(GraphNode(
             id=f"c:{c.email}",
             type="contributor",
@@ -94,11 +102,8 @@ def build_graph(
             if weight < 0.01:
                 continue
 
-            # Look up expertise depth
-            depth = "working"
-            for name_or_email in [author_email]:
-                if name_or_email in expertise_lookup:
-                    depth = expertise_lookup[name_or_email].get(m.module, depth)
+            # Look up expertise depth by email
+            depth = expertise_by_email.get(author_email, {}).get(m.module, "working")
 
             links.append(GraphLink(
                 source=f"c:{author_email}",
@@ -113,6 +118,41 @@ def build_graph(
     nodes = [n for n in nodes if n.id in linked_ids]
 
     return GraphData(nodes=nodes, links=links)
+
+
+def _build_username_email_map(
+    contributors: list[ContributorStats],
+    usernames: list[str],
+) -> dict[str, str]:
+    """Map GitHub usernames to git emails using multiple heuristics."""
+    result: dict[str, str] = {}
+    username_set = {u.lower() for u in usernames}
+    unmatched = set(username_set)
+
+    for c in contributors:
+        email_lower = c.email.lower()
+        prefix = email_lower.split("@")[0]
+        # Handle noreply: "12345+username@users.noreply.github.com"
+        if "+" in prefix:
+            prefix = prefix.split("+", 1)[1]
+        domain = email_lower.split("@")[1] if "@" in email_lower else ""
+        domain_name = domain.split(".")[0] if domain else ""
+
+        for uname in list(unmatched):
+            # Strategy 1: exact prefix match (davidism@gmail.com ↔ davidism)
+            if uname == prefix:
+                result[uname] = c.email
+                unmatched.discard(uname)
+            # Strategy 2: username in domain name (m@mitchellh.com ↔ mitchellh)
+            elif uname == domain_name:
+                result[uname] = c.email
+                unmatched.discard(uname)
+            # Strategy 3: prefix starts with username or vice versa (3+ chars)
+            elif len(uname) >= 3 and (prefix.startswith(uname) or uname.startswith(prefix)):
+                result[uname] = c.email
+                unmatched.discard(uname)
+
+    return result
 
 
 def _depth_rank(depth: str) -> int:

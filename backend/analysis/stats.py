@@ -1,5 +1,10 @@
-from collections import defaultdict
+from __future__ import annotations
 
+import re
+from collections import defaultdict
+from typing import Callable
+
+from backend.config import is_excluded_file
 from backend.api.schemas import (
     BlameResult,
     CommitRecord,
@@ -7,6 +12,27 @@ from backend.api.schemas import (
     ContributorStats,
     ModuleStats,
 )
+
+# Matches GitHub noreply emails: "id+user@users.noreply.github.com" or "user@users.noreply.github.com"
+_NOREPLY_RE = re.compile(r'^(?:\d+\+)?(.+)@users\.noreply\.github\.com$', re.IGNORECASE)
+
+
+def build_email_resolver(login_to_email: dict[str, str]) -> Callable[[str], str]:
+    """Build a function that resolves noreply emails to real emails via the login map."""
+    # Reverse: noreply-username → real email (from login_to_email)
+    cache: dict[str, str] = {}
+    for login, email in login_to_email.items():
+        cache[login.lower()] = email
+
+    def resolve(email: str) -> str:
+        m = _NOREPLY_RE.match(email)
+        if m:
+            username = m.group(1).lower()
+            if username in cache:
+                return cache[username]
+        return email
+
+    return resolve
 
 
 def file_to_module(path: str) -> str:
@@ -17,19 +43,30 @@ def file_to_module(path: str) -> str:
     return parts[0] if parts else "root"
 
 
-def build_contributor_stats(commits: list[CommitRecord]) -> list[ContributorStats]:
+def build_contributor_stats(
+    commits: list[CommitRecord],
+    login_to_email: dict[str, str] | None = None,
+) -> list[ContributorStats]:
     """Aggregate per-contributor statistics."""
+    resolve = build_email_resolver(login_to_email or {})
     by_author: dict[str, ContributorStats] = {}
 
     for c in commits:
-        key = c.author_email
+        key = resolve(c.author_email)
         if key not in by_author:
+            # Use the original name, but prefer a non-username-style name
+            name = c.author_name
             by_author[key] = ContributorStats(
-                name=c.author_name,
-                email=c.author_email,
+                name=name,
+                email=key,
                 first_commit=c.date,
                 last_commit=c.date,
             )
+        else:
+            # If we already have an entry, prefer longer/more human-readable name
+            existing = by_author[key]
+            if len(c.author_name) > len(existing.name) and ' ' in c.author_name:
+                existing.name = c.author_name
 
         s = by_author[key]
         s.total_commits += 1
@@ -51,8 +88,10 @@ def build_contributor_stats(commits: list[CommitRecord]) -> list[ContributorStat
 def build_module_stats(
     commits: list[CommitRecord],
     blame_results: list[BlameResult],
+    login_to_email: dict[str, str] | None = None,
 ) -> list[ModuleStats]:
     """Build contributor x module matrix with bus factor."""
+    resolve = build_email_resolver(login_to_email or {})
     modules: dict[str, ModuleStats] = {}
 
     # Aggregate commit data per module
@@ -64,7 +103,7 @@ def build_module_stats(
             m = modules[mod]
             m.total_commits += 1
 
-            author = c.author_email
+            author = resolve(c.author_email)
             if author not in m.contributors:
                 m.contributors[author] = ContributorModuleStats()
             cs = m.contributors[author]
@@ -80,7 +119,7 @@ def build_module_stats(
         m = modules[mod]
         m.total_lines += br.total_lines
         for entry in br.entries:
-            author = entry.author_email
+            author = resolve(entry.author_email)
             if author not in m.contributors:
                 m.contributors[author] = ContributorModuleStats()
             m.contributors[author].blame_lines += entry.lines
@@ -135,6 +174,8 @@ def get_most_changed_files(commits: list[CommitRecord], top_n: int = 30) -> list
     file_counts: dict[str, int] = defaultdict(int)
     for c in commits:
         for f in c.files:
+            if is_excluded_file(f.path):
+                continue
             file_counts[f.path] += 1
 
     sorted_files = sorted(file_counts.items(), key=lambda x: -x[1])

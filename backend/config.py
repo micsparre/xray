@@ -1,10 +1,89 @@
 import os
+import fnmatch
 from dotenv import load_dotenv
 
 load_dotenv()
 
+# ---------------------------------------------------------------------------
+# File exclusion patterns – these are NOT knowledge moats.
+# Patterns use fnmatch-style globbing against the full relative path.
+# ---------------------------------------------------------------------------
+EXCLUDED_FILE_PATTERNS: list[str] = [
+    # Lock / generated dependency files
+    "*.lock",
+    "package-lock.json",
+    "yarn.lock",
+    "pnpm-lock.yaml",
+    "requirements.txt",
+    "Pipfile.lock",
+    "composer.lock",
+    "Gemfile.lock",
+    "go.sum",
+    "poetry.lock",
+    # Documentation
+    "*.md",
+    "*.rst",
+    "*.txt",
+    "docs/*",
+    "doc/*",
+    "CHANGELOG*",
+    "CHANGES*",
+    "LICENSE*",
+    "COPYING*",
+    "AUTHORS*",
+    "CONTRIBUTORS*",
+    # CI / CD
+    ".github/*",
+    ".gitlab-ci.yml",
+    ".travis.yml",
+    "Jenkinsfile",
+    ".circleci/*",
+    # IDE / editor / OS / repo config
+    ".vscode/*",
+    ".idea/*",
+    ".DS_Store",
+    ".editorconfig",
+    ".gitignore",
+    ".gitattributes",
+    ".mailmap",
+    ".pre-commit-config.yaml",
+    ".prettierrc*",
+    ".eslintrc*",
+    ".stylelintrc*",
+    ".browserslistrc",
+    # Generated / minified assets
+    "*.min.js",
+    "*.min.css",
+    "*.map",
+    "vendor/*",
+    "node_modules/*",
+    # Images / binaries (git numstat shows "-" for these, but just in case)
+    "*.png",
+    "*.jpg",
+    "*.jpeg",
+    "*.gif",
+    "*.ico",
+    "*.svg",
+    "*.woff",
+    "*.woff2",
+    "*.ttf",
+    "*.eot",
+]
+
+
+def is_excluded_file(path: str) -> bool:
+    """Return True if `path` matches any exclusion pattern."""
+    for pattern in EXCLUDED_FILE_PATTERNS:
+        if fnmatch.fnmatch(path, pattern):
+            return True
+        # Also match against the basename for extension patterns
+        basename = path.rsplit("/", 1)[-1]
+        if fnmatch.fnmatch(basename, pattern):
+            return True
+    return False
+
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-4-opus-20250514")
+ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-opus-4-6")
 CLONE_BASE_DIR = os.getenv("CLONE_BASE_DIR", "/tmp/xray-repos")
 DEFAULT_MONTHS = int(os.getenv("DEFAULT_MONTHS", "6"))
 MAX_CONCURRENT_AI = int(os.getenv("MAX_CONCURRENT_AI", "5"))

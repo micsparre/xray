@@ -30,6 +30,11 @@ export interface CachedRepo {
   analyzed_at: number;
 }
 
+export async function deleteCached(repoSlug: string): Promise<boolean> {
+  const res = await fetch(`${API_BASE}/cached/${repoSlug}`, { method: 'DELETE' });
+  return res.ok;
+}
+
 export async function listCached(): Promise<CachedRepo[]> {
   const res = await fetch(`${API_BASE}/cached`);
   if (!res.ok) return [];

@@ -10,22 +10,25 @@ const CATEGORY_LABELS: Record<string, { label: string; icon: string }> = {
   risk: { label: 'Risk', icon: '\u26A0\uFE0F' },
   opportunity: { label: 'Opportunity', icon: '\u2728' },
   pattern: { label: 'Pattern', icon: '\uD83D\uDD0D' },
-  recommendation: { label: 'Action', icon: '\uD83D\uDCA1' },
+  recommendation: { label: 'Recommendations', icon: '\uD83D\uDCA1' },
 };
 
 export function InsightCards({ patternResult }: Props) {
   const [filter, setFilter] = useState<string>('all');
 
-  const filtered =
+  const SEVERITY_ORDER: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
+
+  const filtered = [...(
     filter === 'all'
       ? patternResult.insights
-      : patternResult.insights.filter((i) => i.category === filter);
+      : patternResult.insights.filter((i) => i.category === filter)
+  )].sort((a, b) => (SEVERITY_ORDER[a.severity] ?? 9) - (SEVERITY_ORDER[b.severity] ?? 9));
 
   return (
     <div className="space-y-6">
       {/* Executive Summary */}
       {patternResult.executive_summary && (
-        <div className="bg-gradient-to-r from-zinc-600/10 to-purple-500/10 border border-zinc-500/20 rounded-lg p-4">
+        <div className="bg-gradient-to-r from-zinc-600/10 to-orange-500/10 border border-zinc-500/20 rounded-lg p-4">
           <h3 className="text-sm font-semibold text-white mb-2">Executive Summary</h3>
           <p className="text-sm text-zinc-300 leading-relaxed">
             {patternResult.executive_summary}
@@ -82,7 +85,7 @@ export function InsightCards({ patternResult }: Props) {
                 {insight.modules.map((m) => (
                   <span
                     key={m}
-                    className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20"
+                    className="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20"
                   >
                     {m}
                   </span>
@@ -93,8 +96,8 @@ export function InsightCards({ patternResult }: Props) {
         })}
       </div>
 
-      {/* Recommendations */}
-      {patternResult.recommendations.length > 0 && (
+      {/* Recommendations — shown on All and Recommendations tabs */}
+      {(filter === 'all' || filter === 'recommendation') && patternResult.recommendations.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-sm font-semibold text-white">Recommendations</h3>
           <div className="space-y-1.5">

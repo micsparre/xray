@@ -106,6 +106,7 @@ export interface AnalysisResult {
   expertise_classifications: ExpertiseClassification[];
   review_classifications: ReviewClassification[];
   pattern_result: PatternDetectionResult;
+  login_to_email: Record<string, string>;
 }
 
 // --- WebSocket messages ---
@@ -124,6 +125,7 @@ export type AnalysisStatus = 'idle' | 'analyzing' | 'complete' | 'error';
 export interface AppState {
   status: AnalysisStatus;
   jobId: string | null;
+  analyzingRepoName: string | null;
   currentStage: number;
   stageProgress: number;
   stageMessage: string;
@@ -134,7 +136,7 @@ export interface AppState {
 }
 
 export type AppAction =
-  | { type: 'START_ANALYSIS'; jobId: string }
+  | { type: 'START_ANALYSIS'; jobId: string; repoName: string }
   | { type: 'PROGRESS'; stage: number; progress: number; message: string }
   | { type: 'PARTIAL_RESULT'; data: AnalysisResult }
   | { type: 'COMPLETE'; data: AnalysisResult }

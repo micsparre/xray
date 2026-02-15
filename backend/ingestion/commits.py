@@ -2,6 +2,7 @@ import asyncio
 from pathlib import Path
 
 from backend.api.schemas import CommitRecord, FileChange
+from backend.config import is_excluded_file
 
 
 COMMIT_START = "---XRAY_COMMIT---"
@@ -53,6 +54,8 @@ async def get_commits(repo_path: Path, months: int = 6) -> list[CommitRecord]:
                     additions = int(add_str) if add_str != "-" else 0
                     deletions = int(del_str) if del_str != "-" else 0
                 except ValueError:
+                    continue
+                if is_excluded_file(path):
                     continue
                 files.append(FileChange(additions=additions, deletions=deletions, path=path))
 

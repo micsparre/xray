@@ -97,6 +97,16 @@ async def get_cached(repo_slug: str):
     return json.loads(cache_path.read_text())
 
 
+@router.delete("/cached/{repo_slug:path}")
+async def delete_cached(repo_slug: str):
+    """Delete a cached analysis result."""
+    cache_path = Path("cached_results") / f"{repo_slug.replace('/', '_')}.json"
+    if not cache_path.exists():
+        return {"error": "No cached results for this repo"}
+    cache_path.unlink()
+    return {"ok": True}
+
+
 @router.websocket("/ws/{job_id}")
 async def websocket_endpoint(websocket: WebSocket, job_id: str):
     await websocket.accept()
@@ -109,12 +119,26 @@ async def websocket_endpoint(websocket: WebSocket, job_id: str):
     job = jobs[job_id]
     job["ws_clients"].append(websocket)
 
-    # If job already has partial or complete results, send them
-    if job["result"] is not None and job["status"] == JobStatus.complete:
+    # Send current job state immediately so the client isn't stuck on stage 0
+    if job["status"] == JobStatus.error:
+        await websocket.send_json(WSMessage(
+            type="error", message=job.get("message", "Analysis failed"),
+        ).model_dump())
+        await websocket.close()
+        return
+    elif job["result"] is not None and job["status"] == JobStatus.complete:
         await websocket.send_json(WSMessage(
             type="complete", stage=5, progress=1.0,
             message="Analysis complete!",
             data=job["result"].model_dump(),
+        ).model_dump())
+    elif job["stage"] > 0:
+        # Job is in progress — send current stage so client catches up
+        await websocket.send_json(WSMessage(
+            type="progress",
+            stage=job["stage"],
+            progress=job["progress"],
+            message=job["message"],
         ).model_dump())
 
     try:

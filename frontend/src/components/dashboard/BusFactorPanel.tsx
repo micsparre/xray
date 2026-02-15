@@ -1,8 +1,9 @@
-import type { ModuleStats } from '../../types';
+import type { ModuleStats, ContributorStats } from '../../types';
 import { riskBadgeColor } from '../../lib/graph-utils';
 
 interface Props {
   modules: ModuleStats[];
+  contributors: ContributorStats[];
 }
 
 function riskLevel(bf: number): string {
@@ -12,8 +13,25 @@ function riskLevel(bf: number): string {
   return 'low';
 }
 
-export function BusFactorPanel({ modules }: Props) {
-  const sorted = [...modules].sort((a, b) => a.bus_factor - b.bus_factor);
+export function BusFactorPanel({ modules, contributors }: Props) {
+  // Build email → display name lookup
+  const nameByEmail = new Map<string, string>();
+  for (const c of contributors) {
+    nameByEmail.set(c.email, c.name);
+  }
+  const displayName = (email: string) => nameByEmail.get(email) ?? email.split('@')[0];
+  // Compute max commits for normalization
+  const maxCommits = Math.max(1, ...modules.map((m) => m.total_commits));
+
+  // Sort by risk score: combines low bus factor with module importance (commit activity).
+  // A 0-bus-factor module with 3 commits is noise; one with 500 commits is critical.
+  const sorted = [...modules].sort((a, b) => {
+    const importanceA = a.total_commits / maxCommits;
+    const importanceB = b.total_commits / maxCommits;
+    const riskA = (1 - a.bus_factor) * importanceA;
+    const riskB = (1 - b.bus_factor) * importanceB;
+    return riskB - riskA;
+  });
 
   return (
     <div className="space-y-4">
@@ -21,9 +39,22 @@ export function BusFactorPanel({ modules }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
         {sorted.slice(0, 15).map((mod) => {
           const risk = riskLevel(mod.bus_factor);
-          const topOwners = Object.entries(mod.blame_ownership)
-            .sort(([, a], [, b]) => b - a)
-            .slice(0, 3);
+          // Prefer blame ownership; fall back to commit share when blame is unavailable
+          let topOwners: [string, number][];
+          if (Object.keys(mod.blame_ownership).length > 0) {
+            topOwners = Object.entries(mod.blame_ownership)
+              .sort(([, a], [, b]) => b - a)
+              .slice(0, 3);
+          } else {
+            const totalCommits = Object.values(mod.contributors).reduce(
+              (sum, c) => sum + c.commits,
+              0,
+            );
+            topOwners = Object.entries(mod.contributors)
+              .map(([email, c]) => [email, totalCommits > 0 ? c.commits / totalCommits : 0] as [string, number])
+              .sort(([, a], [, b]) => b - a)
+              .slice(0, 3);
+          }
 
           return (
             <div
@@ -68,11 +99,17 @@ export function BusFactorPanel({ modules }: Props) {
               </div>
 
               {topOwners.length > 0 && (
-                <div className="space-y-0.5">
+                <div className="space-y-1">
                   {topOwners.map(([email, pct]) => (
-                    <div key={email} className="flex items-center justify-between text-[10px]">
-                      <span className="text-zinc-400 truncate">{email.split('@')[0]}</span>
-                      <span className="text-zinc-500 tabular-nums">{(pct * 100).toFixed(0)}%</span>
+                    <div key={email} className="flex items-center gap-2 text-[10px]">
+                      <span className="text-zinc-400 truncate w-32 shrink-0" title={displayName(email)}>{displayName(email)}</span>
+                      <div className="flex-1 h-1 bg-zinc-700/50 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-zinc-400/60"
+                          style={{ width: `${pct * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-zinc-500 tabular-nums w-7 text-right shrink-0">{(pct * 100).toFixed(0)}%</span>
                     </div>
                   ))}
                 </div>

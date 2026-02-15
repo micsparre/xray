@@ -76,6 +76,7 @@ class PRData(BaseModel):
     number: int
     title: str
     author: str
+    author_email: str = ""
     created_at: str = ""
     merged_at: str | None = None
     additions: int = 0
@@ -201,6 +202,7 @@ class AnalysisResult(BaseModel):
     expertise_classifications: list[ExpertiseClassification] = []
     review_classifications: list[ReviewClassification] = []
     pattern_result: PatternDetectionResult = PatternDetectionResult()
+    login_to_email: dict[str, str] = {}
 
 
 # --- WebSocket message ---

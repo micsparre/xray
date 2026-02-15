@@ -5,6 +5,7 @@ from typing import Any, Callable, Coroutine
 
 from backend.api.schemas import (
     AnalysisResult,
+    PRData,
     WSMessage,
 )
 from backend.analysis.graph_builder import build_graph
@@ -49,7 +50,12 @@ async def run_analysis(
     # ── Stage 1: Data Collection ──
     await emit(WSMessage(type="progress", stage=1, total_stages=5, message="Cloning repository...", progress=0.0))
 
-    repo_path = await clone_repo(repo_url)
+    async def clone_progress(msg: str):
+        # Extract just the percentage if present
+        pct = msg.split(":")[-1].strip() if ":" in msg else msg
+        await emit(WSMessage(type="progress", stage=1, message=f"Cloning repository... {pct}", progress=0.0))
+
+    repo_path = await clone_repo(repo_url, on_progress=clone_progress)
 
     await emit(WSMessage(type="progress", stage=1, message="Extracting commit history...", progress=0.2))
     commits = await get_commits(repo_path, months)
@@ -60,14 +66,19 @@ async def run_analysis(
 
     # Fetch PRs (non-fatal — gh may not be authenticated)
     await emit(WSMessage(type="progress", stage=1, message="Fetching pull requests...", progress=0.5))
-    prs = []
+    prs: list[PRData] = []
     try:
-        prs = await asyncio.wait_for(fetch_prs(repo_url), timeout=30)
+        prs = await asyncio.wait_for(fetch_prs(repo_url, months), timeout=120)
     except asyncio.TimeoutError:
         logger.warning("PR fetch timed out — continuing without PR data")
     except Exception as e:
         logger.warning(f"PR fetch failed ({e}) — continuing without PR data")
     result.total_prs = len(prs)
+
+    # Build GitHub login → git email mapping from PR commit data
+    for pr in prs:
+        if pr.author_email and pr.author != "ghost":
+            result.login_to_email.setdefault(pr.author, pr.author_email)
 
     # Blame (non-fatal — some files may fail)
     await emit(WSMessage(type="progress", stage=1, message="Running git blame...", progress=0.7))
@@ -83,11 +94,11 @@ async def run_analysis(
     # ── Stage 2: Statistical Analysis ──
     await emit(WSMessage(type="progress", stage=2, message="Building contributor statistics...", progress=0.0))
 
-    contributors = build_contributor_stats(commits)
+    contributors = build_contributor_stats(commits, result.login_to_email)
     result.contributors = contributors
     result.total_contributors = len(contributors)
 
-    modules = build_module_stats(commits, blame_results)
+    modules = build_module_stats(commits, blame_results, result.login_to_email)
     result.modules = modules
 
     graph = build_graph(contributors, modules)
@@ -121,7 +132,7 @@ async def run_analysis(
             async def code_progress(done: int, total: int):
                 await emit(WSMessage(
                     type="progress", stage=3,
-                    message=f"Analyzing PR {done}/{total}...",
+                    message=f"Analyzing {done} of {total} top-ranked PRs...",
                     progress=0.2 + (done / total) * 0.8,
                 ))
 
@@ -159,7 +170,7 @@ async def run_analysis(
         async def review_progress(done: int, total: int):
             await emit(WSMessage(
                 type="progress", stage=4,
-                message=f"Analyzing reviews {done}/{total}...",
+                message=f"Analyzing {done} of {total} reviewed PRs...",
                 progress=done / total,
             ))
 
