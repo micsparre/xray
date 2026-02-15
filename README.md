@@ -18,7 +18,7 @@ The key insight: **Claude reads actual code diffs** to understand expertise dept
 
 ## Prerequisites
 
-- Python 3.13+
+- [uv](https://docs.astral.sh/uv/) (Python package manager)
 - Node.js 18+
 - [`gh` CLI](https://cli.github.com/) (authenticated via `gh auth login`)
 - [Anthropic API key](https://console.anthropic.com/)
@@ -30,9 +30,7 @@ git clone https://github.com/micsparre/xray.git
 cd xray
 
 # Backend
-python3.13 -m venv .venv
-source .venv/bin/activate
-pip install -r backend/requirements.txt
+uv sync
 
 # Frontend
 cd frontend && npm install && cd ..
@@ -46,8 +44,7 @@ cp .env.example .env
 
 ```bash
 # Terminal 1 — Backend
-source .venv/bin/activate
-PYTHONPATH=. python3.13 -m uvicorn backend.main:app --host 0.0.0.0 --port 8001
+PYTHONPATH=. uv run uvicorn backend.main:app --host 0.0.0.0 --port 8001
 
 # Terminal 2 — Frontend
 cd frontend

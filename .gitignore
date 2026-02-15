@@ -1,8 +1,9 @@
-# Python
+# Python / uv
 __pycache__/
 *.py[cod]
 *.egg-info/
 .venv/
+.python-version
 
 # Node
 node_modules/
