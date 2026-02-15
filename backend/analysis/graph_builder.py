@@ -97,11 +97,13 @@ def build_graph(
         ))
 
     # Links: contributor -> module
+    bot_emails = {c.email for c in contributors if c.is_bot}
     module_set = {m.module for m in top_modules}
     for m in top_modules:
         for author_email, cs in m.contributors.items():
             weight = cs.commits / max_mod_commits
-            if weight < 0.01:
+            # Keep bot links regardless of weight so they remain visible in graph
+            if weight < 0.01 and author_email not in bot_emails:
                 continue
 
             # Look up expertise depth by email

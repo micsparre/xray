@@ -576,6 +576,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
         onZoom={handleZoom}
         nodeId="id"
         cooldownTicks={100}
+        autoPauseRedraw={false}
         enableZoomInteraction={true}
         enablePanInteraction={true}
       />

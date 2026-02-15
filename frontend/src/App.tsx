@@ -28,8 +28,11 @@ function App() {
     const normalized = path.replace(/^\/+|\/+$/g, '');
     const page = normalized === 'how-it-works' ? 'how-it-works' : null;
     setActivePage(page);
-    if (!page) reset();
-    window.history.pushState(null, '', path);
+    if (!page) {
+      reset(); // reset() already pushes '/' to history
+    } else {
+      window.history.pushState(null, '', path);
+    }
   }, [reset]);
 
   // Sync activePage on browser back/forward
@@ -51,7 +54,7 @@ function App() {
     });
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [activePage]);
 
   const hasResult = !!state.result;
   const hasGraph = hasResult && state.result!.graph.nodes.length > 0;
