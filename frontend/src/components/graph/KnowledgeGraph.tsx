@@ -31,7 +31,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [typeFilters, setTypeFilters] = useState<Set<NodeTypeFilter>>(() => new Set(['contributor', 'module', 'bot']));
+  const [typeFilters, setTypeFilters] = useState<Set<NodeTypeFilter>>(() => new Set(['contributor', 'module']));
   const [riskFilters, setRiskFilters] = useState<Set<RiskLevel>>(() => new Set(ALL_RISK_LEVELS));
 
   // Debounce search query (150ms)
@@ -42,7 +42,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
 
   // Compute match set — O(1) lookups in paint callbacks
   const matchSetRef = useRef<Set<string>>(new Set());
-  const searchActive = debouncedQuery.length > 0 || !typeFilters.has('contributor') || !typeFilters.has('module') || !typeFilters.has('bot') || riskFilters.size < ALL_RISK_LEVELS.length;
+  const searchActive = debouncedQuery.length > 0 || !typeFilters.has('contributor') || !typeFilters.has('module') || riskFilters.size < ALL_RISK_LEVELS.length;
 
   const matchCount = useMemo(() => {
     const set = new Set<string>();
@@ -72,7 +72,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
     return set.size;
   }, [data.nodes, debouncedQuery, typeFilters, riskFilters]);
 
-  const ALL_TYPES: NodeTypeFilter[] = ['contributor', 'module', 'bot'];
+  const ALL_TYPES: NodeTypeFilter[] = ['contributor', 'module'];
   const toggleType = useCallback((t: NodeTypeFilter) => {
     setTypeFilters(prev => {
       // If this is the only active filter, reset to show all
@@ -374,9 +374,14 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
         ctx.fill();
       }
 
-      // Main circle
+      // Main shape — rounded square for modules, circle for contributors
       ctx.beginPath();
-      ctx.arc(node.x!, node.y!, drawSize, 0, 2 * Math.PI);
+      if (n.type === 'module') {
+        const r = drawSize * 0.3;
+        ctx.roundRect(node.x! - drawSize, node.y! - drawSize, drawSize * 2, drawSize * 2, r);
+      } else {
+        ctx.arc(node.x!, node.y!, drawSize, 0, 2 * Math.PI);
+      }
       ctx.fillStyle = n.color;
       ctx.fill();
 
@@ -622,10 +627,9 @@ function GraphLegend() {
       <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">Legend</p>
       <div className="space-y-1.5">
         <LegendDot color="bg-blue-500" label="Contributor" />
-        <LegendDot color="bg-violet-500" label="Bot" />
-        <LegendDot color="bg-green-500" label="Module (healthy)" />
-        <LegendDot color="bg-yellow-500" label="Module (moderate risk)" />
-        <LegendDot color="bg-red-500" label="Module (critical risk)" />
+        <LegendSquare color="bg-green-500" label="Module (healthy)" />
+        <LegendSquare color="bg-yellow-500" label="Module (moderate risk)" />
+        <LegendSquare color="bg-red-500" label="Module (critical risk)" />
       </div>
       <div className="space-y-1.5 pt-2 border-t border-zinc-700/40">
         <p className="text-[10px] text-zinc-600">Edge = expertise depth</p>
@@ -641,6 +645,15 @@ function LegendDot({ color, label }: { color: string; label: string }) {
   return (
     <div className="flex items-center gap-2">
       <div className={`w-2.5 h-2.5 rounded-full ${color} ring-1 ring-white/10`} />
+      <span className="text-zinc-400">{label}</span>
+    </div>
+  );
+}
+
+function LegendSquare({ color, label }: { color: string; label: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className={`w-2.5 h-2.5 rounded-[3px] ${color} ring-1 ring-white/10`} />
       <span className="text-zinc-400">{label}</span>
     </div>
   );

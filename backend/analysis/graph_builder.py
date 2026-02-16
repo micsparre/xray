@@ -63,18 +63,16 @@ def build_graph(
 
     max_commits = max((c.total_commits for c in contributors), default=1)
 
-    # Contributor nodes (humans and bots get different types/colors)
+    # Contributor nodes
     for c in contributors:
         size = 3 + (c.total_commits / max_commits) * 12
         expertise_areas = list(expertise_by_email.get(c.email, {}).keys())
-        node_type = "bot" if c.is_bot else "contributor"
-        node_color = "#8b5cf6" if c.is_bot else "#3b82f6"  # violet for bots, blue for humans
         nodes.append(GraphNode(
             id=f"c:{c.email}",
-            type=node_type,
+            type="contributor",
             label=c.name,
             size=size,
-            color=node_color,
+            color="#3b82f6",
             total_commits=c.total_commits,
             total_lines=c.total_additions + c.total_deletions,
             expertise_areas=expertise_areas,
@@ -97,13 +95,11 @@ def build_graph(
         ))
 
     # Links: contributor -> module
-    bot_emails = {c.email for c in contributors if c.is_bot}
     module_set = {m.module for m in top_modules}
     for m in top_modules:
         for author_email, cs in m.contributors.items():
             weight = cs.commits / max_mod_commits
-            # Keep bot links regardless of weight so they remain visible in graph
-            if weight < 0.01 and author_email not in bot_emails:
+            if weight < 0.01:
                 continue
 
             # Look up expertise depth by email

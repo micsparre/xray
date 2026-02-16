@@ -11,7 +11,6 @@ export function nodeGlowColor(node: GraphNode): string {
     if (node.risk_level === 'moderate') return 'rgba(234, 179, 8, 0.15)';
     return 'rgba(34, 197, 94, 0.15)';
   }
-  if (node.type === 'bot') return 'rgba(139, 92, 246, 0.2)';
   return 'rgba(161, 161, 170, 0.2)';
 }
 

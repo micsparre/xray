@@ -127,7 +127,7 @@ class ContributorStats(BaseModel):
 
 class GraphNode(BaseModel):
     id: str
-    type: str  # "contributor", "bot", or "module"
+    type: str  # "contributor" or "module"
     label: str
     size: float = 1.0
     color: str = "#3b82f6"

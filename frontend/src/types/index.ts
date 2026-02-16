@@ -1,7 +1,7 @@
 // --- Graph types ---
 export interface GraphNode {
   id: string;
-  type: 'contributor' | 'module' | 'bot';
+  type: 'contributor' | 'module';
   label: string;
   size: number;
   color: string;

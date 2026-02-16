@@ -5,8 +5,7 @@ import { RepoInput } from './components/input/RepoInput';
 import { AnalysisProgress } from './components/input/AnalysisProgress';
 import { KnowledgeGraph } from './components/graph/KnowledgeGraph';
 import { DetailPanel } from './components/graph/DetailPanel';
-import { BusFactorPanel } from './components/dashboard/BusFactorPanel';
-import { ReviewQualityPanel } from './components/dashboard/ReviewQualityPanel';
+import { Dashboard } from './components/dashboard/Dashboard';
 import { InsightCards } from './components/dashboard/InsightCards';
 import { HowItWorks } from './components/pages/HowItWorks';
 import { useAnalysis } from './hooks/useAnalysis';
@@ -258,10 +257,7 @@ function App() {
 
               {/* Dashboard tab */}
               {hasResult && state.activeTab === 'dashboard' && (
-                <div className="p-6 space-y-8 animate-fade-in">
-                  <BusFactorPanel modules={state.result!.modules} contributors={state.result!.contributors} />
-                  <ReviewQualityPanel reviews={state.result!.review_classifications} />
-                </div>
+                <Dashboard result={state.result!} />
               )}
 
               {/* Insights tab */}
