@@ -28,7 +28,7 @@ export function Header({ onNavigate }: HeaderProps) {
       <div className="flex-1" />
       <button
         onClick={() => onNavigate?.('/how-it-works')}
-        className="text-xs text-zinc-400 hover:text-white transition-colors"
+        className="text-xs text-zinc-400 hover:text-white transition-colors cursor-pointer"
       >
         How It Works
       </button>

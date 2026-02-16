@@ -7,7 +7,11 @@ import shutil
 from pathlib import Path
 from typing import Callable, Awaitable
 
+import logging
+
 from backend.config import CLONE_BASE_DIR
+
+logger = logging.getLogger(__name__)
 
 ProgressCallback = Callable[[str], Awaitable[None]]
 
@@ -29,6 +33,33 @@ def repo_slug(repo_url: str) -> str:
 def repo_local_path(repo_url: str) -> Path:
     slug = repo_slug(repo_url)
     return Path(CLONE_BASE_DIR) / slug.replace("/", "_")
+
+
+async def check_repo_size(repo_url: str, max_mb: int) -> None:
+    """Check repo size via GitHub API; raise if too large. Non-fatal if gh fails."""
+    slug = repo_slug(repo_url)
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            "gh", "api", f"repos/{slug}", "--jq", ".size",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, _ = await proc.communicate()
+        if proc.returncode != 0:
+            logger.warning("gh api call failed — skipping repo size check")
+            return
+        size_kb = int(stdout.decode().strip())
+        size_mb = size_kb / 1024
+        if size_mb > max_mb:
+            raise ValueError(
+                f"Repository {slug} is {size_mb:.0f} MB, exceeding the {max_mb} MB limit. "
+                f"Try a smaller repository."
+            )
+        logger.info(f"Repo size check passed: {slug} is {size_mb:.0f} MB (limit: {max_mb} MB)")
+    except ValueError:
+        raise
+    except Exception as e:
+        logger.warning(f"Repo size check failed ({e}) — skipping")
 
 
 async def clone_repo(

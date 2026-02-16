@@ -125,6 +125,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
   const prevDataRef = useRef<GraphData | null>(null);
 
   // Entrance animation: grow nodes from 0 to full size over 600ms
+  // Also reset zoom to fit all nodes when data changes (e.g. switching analyses)
   useEffect(() => {
     if (data !== prevDataRef.current && data.nodes.length > 0) {
       prevDataRef.current = data;
@@ -141,6 +142,15 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
         }
       };
       requestAnimationFrame(animate);
+
+      // Instantly reset view to neutral state so we don't stay zoomed
+      // into the old graph's region, then fit properly once forces settle
+      fgRef.current?.centerAt(0, 0, 0);
+      fgRef.current?.zoom(1, 0);
+      const zoomTimer = setTimeout(() => {
+        fgRef.current?.zoomToFit(400, 60);
+      }, 700);
+      return () => clearTimeout(zoomTimer);
     }
   }, [data]);
 
@@ -370,15 +380,6 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
       ctx.fillStyle = n.color;
       ctx.fill();
 
-      // Search match ring — only visual ring we keep
-      if (searchActive && isSearchMatch) {
-        ctx.beginPath();
-        ctx.arc(node.x!, node.y!, drawSize + 2, 0, 2 * Math.PI);
-        ctx.strokeStyle = 'rgba(212, 155, 90, 0.6)';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      }
-
       // --- Label ---
       const labelAlpha = Math.max(0, (animProgress - 0.5) * 2);
       if (labelAlpha <= 0) {
@@ -388,7 +389,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
 
       // Determine if label should be shown at this zoom level
       const screenSize = size * zoom;
-      const forceShowLabel = isSelected || isHovered || isConnected || (searchActive && isSearchMatch);
+      const forceShowLabel = isSelected || isHovered || isConnected || isHoverConnected || (searchActive && isSearchMatch);
       const showLabel = forceShowLabel || screenSize > LABEL_VISIBILITY_THRESHOLD;
 
       if (showLabel) {
@@ -599,7 +600,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
         </span>
         <button
           onClick={() => fgRef.current?.zoomToFit(400, 60)}
-          className="pointer-events-auto w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-800/80 backdrop-blur border border-zinc-700/40 text-zinc-400 hover:text-white hover:bg-zinc-700/80 transition-colors"
+          className="pointer-events-auto w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-800/80 backdrop-blur border border-zinc-700/40 text-zinc-400 hover:text-white hover:bg-zinc-700/80 transition-colors cursor-pointer"
           title="Fit to view"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">

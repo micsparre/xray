@@ -1,5 +1,5 @@
 import { useReducer, useCallback, useRef, useEffect } from 'react';
-import { startAnalysis, createWebSocket, getCached } from '../api/client';
+import { startAnalysis, createWebSocket, getCached, getJobStatus } from '../api/client';
 import type { AppState, AppAction, WSMessage } from '../types';
 
 type Tab = AppState['activeTab'];
@@ -43,6 +43,26 @@ function repoNameFromUrl(repoUrl: string): string {
   const parts = cleaned.split('/').filter(Boolean);
   if (parts.length >= 2) return `${parts[parts.length - 2]}/${parts[parts.length - 1]}`;
   return repoUrl;
+}
+
+const SESSION_KEY = 'xray_active_job';
+
+function saveActiveJob(jobId: string, repoName: string) {
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({ jobId, repoName }));
+}
+
+function loadActiveJob(): { jobId: string; repoName: string } | null {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function clearActiveJob() {
+  sessionStorage.removeItem(SESSION_KEY);
 }
 
 const initialState: AppState = {
@@ -132,13 +152,90 @@ export function useAnalysis() {
   const wsRef = useRef<WebSocket | null>(null);
   const initialLoadDone = useRef(false);
 
-  // On mount: load repo from URL if present
+  const connectWebSocket = useCallback((jobId: string) => {
+    const ws = createWebSocket(jobId);
+    wsRef.current = ws;
+
+    ws.onmessage = (event) => {
+      const msg: WSMessage = JSON.parse(event.data);
+
+      switch (msg.type) {
+        case 'progress':
+          dispatch({
+            type: 'PROGRESS',
+            stage: msg.stage,
+            progress: msg.progress,
+            message: msg.message,
+          });
+          break;
+        case 'partial_result':
+          if (msg.data) {
+            dispatch({ type: 'PARTIAL_RESULT', data: msg.data });
+          }
+          dispatch({
+            type: 'PROGRESS',
+            stage: msg.stage,
+            progress: msg.progress,
+            message: msg.message,
+          });
+          break;
+        case 'complete':
+          if (msg.data) {
+            dispatch({ type: 'COMPLETE', data: msg.data });
+            pushUrl(msg.data.repo_name, 'graph');
+          }
+          clearActiveJob();
+          ws.close();
+          break;
+        case 'error':
+          dispatch({ type: 'ERROR', message: msg.message });
+          ws.close();
+          break;
+      }
+    };
+
+    ws.onerror = () => {
+      dispatch({ type: 'ERROR', message: 'WebSocket connection error' });
+    };
+
+    return ws;
+  }, []);
+
+  // On mount: reconnect to active job or load cached results
   useEffect(() => {
     if (initialLoadDone.current) return;
     initialLoadDone.current = true;
+
+    const activeJob = loadActiveJob();
+    if (activeJob) {
+      // Check if the job is still alive on the backend
+      getJobStatus(activeJob.jobId).then((status) => {
+        if (!status || status.status === 'error') {
+          // Job is gone or errored — clean up and try cached
+          clearActiveJob();
+          const { repoSlug, page } = parseRoute();
+          if (repoSlug && !page) {
+            const slug = repoSlug.replace('/', '_');
+            getCached(slug).then((data) => {
+              if (data && !data.error) dispatch({ type: 'COMPLETE', data });
+            }).catch(() => {});
+          }
+          return;
+        }
+
+        // Job still running (or complete) — reconnect
+        dispatch({ type: 'START_ANALYSIS', jobId: activeJob.jobId, repoName: activeJob.repoName });
+        pushUrl(activeJob.repoName, 'graph');
+        connectWebSocket(activeJob.jobId);
+      }).catch(() => {
+        clearActiveJob();
+      });
+      return;
+    }
+
+    // No active job — try loading cached results from URL
     const { repoSlug, page } = parseRoute();
     if (repoSlug && !page) {
-      // Convert "owner/repo" to "owner_repo" for the cached API
       const slug = repoSlug.replace('/', '_');
       getCached(slug).then((data) => {
         if (data && !data.error) {
@@ -146,7 +243,7 @@ export function useAnalysis() {
         }
       }).catch(() => {});
     }
-  }, []);
+  }, [connectWebSocket]);
 
   // Sync URL when result or tab changes
   useEffect(() => {
@@ -190,59 +287,16 @@ export function useAnalysis() {
       const jobId = await startAnalysis(repoUrl, months);
       dispatch({ type: 'START_ANALYSIS', jobId, repoName });
       pushUrl(repoName, 'graph');
-
-      // Connect WebSocket
-      const ws = createWebSocket(jobId);
-      wsRef.current = ws;
-
-      ws.onmessage = (event) => {
-        const msg: WSMessage = JSON.parse(event.data);
-
-        switch (msg.type) {
-          case 'progress':
-            dispatch({
-              type: 'PROGRESS',
-              stage: msg.stage,
-              progress: msg.progress,
-              message: msg.message,
-            });
-            break;
-          case 'partial_result':
-            if (msg.data) {
-              dispatch({ type: 'PARTIAL_RESULT', data: msg.data });
-            }
-            dispatch({
-              type: 'PROGRESS',
-              stage: msg.stage,
-              progress: msg.progress,
-              message: msg.message,
-            });
-            break;
-          case 'complete':
-            if (msg.data) {
-              dispatch({ type: 'COMPLETE', data: msg.data });
-              pushUrl(msg.data.repo_name, 'graph');
-            }
-            ws.close();
-            break;
-          case 'error':
-            dispatch({ type: 'ERROR', message: msg.message });
-            ws.close();
-            break;
-        }
-      };
-
-      ws.onerror = () => {
-        dispatch({ type: 'ERROR', message: 'WebSocket connection error' });
-      };
-
+      saveActiveJob(jobId, repoName);
+      connectWebSocket(jobId);
     } catch (err) {
       dispatch({ type: 'ERROR', message: (err as Error).message });
     }
-  }, []);
+  }, [connectWebSocket]);
 
   const loadCached = useCallback(async (repoSlug: string) => {
     try {
+      clearActiveJob();
       const data = await getCached(repoSlug);
       if (data && !data.error) {
         dispatch({ type: 'SELECT_NODE', node: null });
@@ -267,6 +321,7 @@ export function useAnalysis() {
 
   const reset = useCallback(() => {
     wsRef.current?.close();
+    clearActiveJob();
     dispatch({ type: 'RESET' });
     pushUrl(null, 'graph');
   }, []);

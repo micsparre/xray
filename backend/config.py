@@ -94,3 +94,9 @@ DIFF_TRUNCATE_CHARS = int(os.getenv("DIFF_TRUNCATE_CHARS", "8000"))
 AI_CALL_TIMEOUT = int(os.getenv("AI_CALL_TIMEOUT", "60"))
 PATTERN_THINKING_BUDGET = int(os.getenv("PATTERN_THINKING_BUDGET", "10000"))
 CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:5174,http://localhost:3000").split(",")
+
+# Production hardening
+MAX_CONCURRENT_ANALYSES = int(os.getenv("MAX_CONCURRENT_ANALYSES", "3"))
+MAX_REPO_SIZE_MB = int(os.getenv("MAX_REPO_SIZE_MB", "500"))
+RATE_LIMIT_MAX = int(os.getenv("RATE_LIMIT_MAX", "5"))
+RATE_LIMIT_WINDOW = int(os.getenv("RATE_LIMIT_WINDOW", "3600"))

@@ -20,7 +20,7 @@ export const GraphSearchBar = forwardRef<HTMLInputElement, Props>(
     const showRiskFilters = typeFilters.has('module');
 
     return (
-      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+      <div className="absolute top-4 left-4 z-50 flex flex-col gap-2">
         {/* Search input row */}
         <div className="flex items-center gap-2 bg-zinc-900/90 backdrop-blur-md border border-zinc-700/40 rounded-xl px-3 py-2 shadow-2xl min-w-[280px]">
           {/* Magnifying glass */}
@@ -48,7 +48,7 @@ export const GraphSearchBar = forwardRef<HTMLInputElement, Props>(
               {/* Clear button */}
               <button
                 onClick={() => onQueryChange('')}
-                className="flex items-center justify-center w-5 h-5 rounded-md hover:bg-zinc-700/60 text-zinc-500 hover:text-zinc-300 transition-colors"
+                className="flex items-center justify-center w-5 h-5 rounded-md hover:bg-zinc-700/60 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
               >
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                   <path d="M1 1l8 8M9 1l-8 8" />
@@ -59,7 +59,7 @@ export const GraphSearchBar = forwardRef<HTMLInputElement, Props>(
         </div>
 
         {/* Filter chips row */}
-        <div className="flex items-center gap-1.5 flex-wrap pl-0.5">
+        <div className="flex items-center gap-1.5 flex-wrap bg-zinc-900/90 backdrop-blur-md border border-zinc-700/40 rounded-xl px-2.5 py-1.5 shadow-2xl">
           {/* Type toggles */}
           <FilterChip
             label="Contributors"
@@ -112,7 +112,7 @@ function FilterChip({ label, active, activeColor, onClick }: {
   return (
     <button
       onClick={onClick}
-      className={`px-2 py-0.5 text-[11px] font-medium rounded-md border transition-colors ${
+      className={`px-2 py-0.5 text-[11px] font-medium rounded-md border transition-colors cursor-pointer ${
         active
           ? activeColor
           : 'bg-zinc-800/60 text-zinc-500 border-zinc-700/40 hover:text-zinc-400 hover:border-zinc-600/40'

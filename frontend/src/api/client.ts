@@ -27,18 +27,30 @@ export interface CachedRepo {
   repo_url: string;
   total_commits: number;
   total_contributors: number;
+  analysis_months: number;
   analyzed_at: number;
 }
 
-export async function deleteCached(repoSlug: string): Promise<boolean> {
-  const res = await fetch(`${API_BASE}/cached/${repoSlug}`, { method: 'DELETE' });
-  return res.ok;
-}
 
 export async function listCached(): Promise<CachedRepo[]> {
   const res = await fetch(`${API_BASE}/cached`);
   if (!res.ok) return [];
   return res.json();
+}
+
+export async function getJobStatus(jobId: string): Promise<{
+  status: string;
+  stage: number;
+  message: string;
+  progress: number;
+} | null> {
+  try {
+    const res = await fetch(`${API_BASE}/status/${jobId}`);
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
 }
 
 export function createWebSocket(jobId: string): WebSocket {

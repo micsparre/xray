@@ -47,11 +47,11 @@ export function depthWidthBonus(depth: string): number {
 /** Base alpha per depth tier — subtle by default, prominent on interaction */
 export function depthBaseAlpha(depth: string): number {
   switch (depth) {
-    case 'architect': return 0.45;
-    case 'deep': return 0.3;
-    case 'working': return 0.22;
-    case 'surface': return 0.08;
-    default: return 0.12;
+    case 'architect': return 0.7;
+    case 'deep': return 0.5;
+    case 'working': return 0.35;
+    case 'surface': return 0.18;
+    default: return 0.25;
   }
 }
 

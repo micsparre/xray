@@ -42,7 +42,7 @@ export function InsightCards({ patternResult }: Props) {
           <button
             key={cat}
             onClick={() => setFilter(cat)}
-            className={`text-xs px-2.5 py-1 rounded-full transition-colors ${
+            className={`text-xs px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
               filter === cat
                 ? 'bg-zinc-500/20 text-zinc-300 border border-zinc-500/30'
                 : 'text-zinc-400 hover:text-white border border-transparent'

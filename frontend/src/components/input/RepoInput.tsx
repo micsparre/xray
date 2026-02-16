@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { AnalysisStatus } from '../../types';
-import { listCached, deleteCached, type CachedRepo } from '../../api/client';
+import { listCached, type CachedRepo } from '../../api/client';
 
 interface Props {
   onAnalyze: (repoUrl: string, months: number) => void;
@@ -9,25 +9,41 @@ interface Props {
   analyzingRepoName: string | null;
   activeRepoName: string | null;
   activeRepoUrl: string | null;
+  activeAnalysisMonths: number | null;
   overviewSlot?: React.ReactNode;
 }
 
-export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, activeRepoName, activeRepoUrl, overviewSlot }: Props) {
+export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, activeRepoName, activeRepoUrl, activeAnalysisMonths, overviewSlot }: Props) {
   const [url, setUrl] = useState('');
   const [months, setMonths] = useState(6);
   const [cachedRepos, setCachedRepos] = useState<CachedRepo[]>([]);
-  const [confirm, setConfirm] = useState<{ action: 'delete' | 'reanalyze'; repoName: string; repo?: CachedRepo } | null>(null);
+  const [confirm, setConfirm] = useState<{ repoName: string; repo?: CachedRepo } | null>(null);
+  const [timeOpen, setTimeOpen] = useState(false);
+  const timeRef = useRef<HTMLDivElement>(null);
 
-  // Populate the URL input when an analysis is loaded
+  // Populate the URL input and time range when an analysis is loaded
   useEffect(() => {
     if (activeRepoUrl) setUrl(activeRepoUrl);
   }, [activeRepoUrl]);
+
+  useEffect(() => {
+    if (activeAnalysisMonths) setMonths(activeAnalysisMonths);
+  }, [activeAnalysisMonths]);
 
   const refreshCached = useCallback(() => {
     listCached().then(setCachedRepos).catch(() => {});
   }, []);
 
   useEffect(() => { refreshCached(); }, [refreshCached]);
+
+  // Close time range dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (timeRef.current && !timeRef.current.contains(e.target as Node)) setTimeOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   // Refresh the cached list when analysis completes
   useEffect(() => {
@@ -41,34 +57,18 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
     e.preventDefault();
     if (!url.trim()) return;
     if (isReanalyze) {
-      setConfirm({ action: 'reanalyze', repoName: activeRepoName });
+      setConfirm({ repoName: activeRepoName });
     } else {
       onAnalyze(url.trim(), months);
     }
   };
 
-  const handleDelete = async (repoName: string) => {
-    const slug = repoName.replace('/', '_');
-    await deleteCached(slug);
-    refreshCached();
-  };
-
-  const handleReanalyze = (repo: CachedRepo) => {
-    if (repo.repo_url) {
-      onAnalyze(repo.repo_url, months);
-    }
-  };
-
   const handleConfirm = () => {
     if (!confirm) return;
-    if (confirm.action === 'delete') {
-      handleDelete(confirm.repoName);
-    } else if (confirm.action === 'reanalyze') {
-      if (confirm.repo) {
-        handleReanalyze(confirm.repo);
-      } else if (url.trim()) {
-        onAnalyze(url.trim(), months);
-      }
+    if (confirm.repo?.repo_url) {
+      onAnalyze(confirm.repo.repo_url, months);
+    } else if (url.trim()) {
+      onAnalyze(url.trim(), months);
     }
     setConfirm(null);
   };
@@ -97,23 +97,46 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
             disabled={isAnalyzing}
           />
         </div>
-        <div>
+        <div ref={timeRef} className="relative">
           <label className="block text-xs font-medium text-zinc-400 mb-1.5">Time Range</label>
-          <select
-            value={months}
-            onChange={(e) => setMonths(Number(e.target.value))}
-            className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-zinc-400/50"
+          <button
+            type="button"
+            onClick={() => !isAnalyzing && setTimeOpen((o) => !o)}
             disabled={isAnalyzing}
+            className="w-full flex items-center justify-between px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-zinc-400/50 focus:border-zinc-400 disabled:opacity-50 cursor-pointer disabled:cursor-default"
           >
-            <option value={3}>Last 3 months</option>
-            <option value={6}>Last 6 months</option>
-            <option value={12}>Last 12 months</option>
-          </select>
+            <span>Last {months} months</span>
+            <svg
+              className={`w-4 h-4 text-zinc-400 transition-transform duration-200 ${timeOpen ? 'rotate-180' : ''}`}
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+            </svg>
+          </button>
+          {timeOpen && (
+            <div className="absolute z-20 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
+              {[3, 6, 12].map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => { setMonths(m); setTimeOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+                    months === m
+                      ? 'bg-zinc-700 text-white'
+                      : 'text-zinc-300 hover:bg-zinc-700/60 hover:text-white'
+                  }`}
+                >
+                  Last {m} months
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <button
           type="submit"
           disabled={!url.trim() || isAnalyzing}
-          className="w-full py-2.5 bg-zinc-700 hover:bg-zinc-600 disabled:bg-zinc-800 disabled:text-zinc-600 text-zinc-200 text-sm font-medium rounded-lg transition-colors border border-zinc-600 hover:border-zinc-500"
+          className="w-full py-2.5 bg-zinc-700 hover:bg-zinc-600 disabled:bg-zinc-800 disabled:text-zinc-600 text-zinc-200 text-sm font-medium rounded-lg transition-colors border border-zinc-600 hover:border-zinc-500 cursor-pointer disabled:cursor-default"
         >
           {isAnalyzing ? 'Analyzing...' : isReanalyze ? 'Re-analyze' : 'Analyze Repository'}
         </button>
@@ -141,7 +164,10 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
               return (
               <div
                 key={repo.repo_name}
+                onClick={() => { if (!isAnalyzing) onLoadCached(repo.repo_name); }}
                 className={`group w-full text-left px-3 py-2 rounded-lg text-xs transition-colors ${
+                  isAnalyzing ? '' : 'cursor-pointer'
+                } ${
                   isReanalyzing
                     ? 'bg-zinc-800/50 border border-orange-500/30 text-zinc-300'
                     : isActive
@@ -149,10 +175,8 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
                       : 'bg-zinc-800/50 hover:bg-zinc-700/50 border border-zinc-700/50 text-zinc-300'
                 }`}
               >
-                <button
-                  onClick={() => onLoadCached(repo.repo_name)}
-                  disabled={isAnalyzing}
-                  className="w-full flex items-center gap-2 disabled:opacity-50"
+                <div
+                  className={`w-full flex items-center gap-2 ${isAnalyzing ? 'opacity-50' : ''}`}
                 >
                   {isReanalyzing ? (
                     <div className="w-3 h-3 border-2 border-orange-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
@@ -163,25 +187,19 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
                   {isReanalyzing ? (
                     <span className="text-[9px] text-orange-400 flex-shrink-0">analyzing</span>
                   ) : (
-                    <span className="text-[9px] text-zinc-500 flex-shrink-0">
+                    <span className="text-[9px] text-zinc-500 flex-shrink-0 flex items-center gap-1">
+                      {repo.analysis_months > 0 && <span className="text-zinc-600">{repo.analysis_months}m</span>}
                       {formatTimeAgo(repo.analyzed_at)}
                     </span>
                   )}
-                </button>
+                </div>
                 <div className={`flex gap-1 mt-1.5 transition-opacity ${isReanalyzing ? 'hidden' : 'opacity-0 group-hover:opacity-100'}`}>
                   <button
-                    onClick={(e) => { e.stopPropagation(); setConfirm({ action: 'reanalyze', repoName: repo.repo_name, repo }); }}
+                    onClick={(e) => { e.stopPropagation(); setConfirm({ repoName: repo.repo_name, repo }); }}
                     disabled={isAnalyzing || !repo.repo_url}
-                    className="flex-1 py-1 text-[10px] text-zinc-400 hover:text-white hover:bg-zinc-600/50 rounded transition-colors disabled:opacity-30"
+                    className="flex-1 py-1 text-[10px] text-zinc-400 hover:text-white hover:bg-zinc-600/50 rounded transition-colors disabled:opacity-30 cursor-pointer disabled:cursor-default"
                   >
                     Re-analyze
-                  </button>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setConfirm({ action: 'delete', repoName: repo.repo_name }); }}
-                    disabled={isAnalyzing}
-                    className="flex-1 py-1 text-[10px] text-red-400/70 hover:text-red-300 hover:bg-red-500/10 rounded transition-colors disabled:opacity-30"
-                  >
-                    Delete
                   </button>
                 </div>
               </div>
@@ -195,30 +213,22 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
       {confirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setConfirm(null)}>
           <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-5 max-w-sm w-full mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-sm font-semibold text-white mb-2">
-              {confirm.action === 'delete' ? 'Delete analysis?' : 'Re-analyze repository?'}
-            </h3>
+            <h3 className="text-sm font-semibold text-white mb-2">Re-analyze repository?</h3>
             <p className="text-xs text-zinc-400 mb-4 leading-relaxed">
-              {confirm.action === 'delete'
-                ? `This will permanently delete the cached analysis for "${confirm.repoName}".`
-                : `This will re-run the full analysis for "${confirm.repoName}", which may take several minutes.`}
+              This will re-run the full analysis for &ldquo;{confirm.repoName}&rdquo;, which may take several minutes.
             </p>
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setConfirm(null)}
-                className="px-3 py-1.5 text-xs text-zinc-400 hover:text-white bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors border border-zinc-700"
+                className="px-3 py-1.5 text-xs text-zinc-400 hover:text-white bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors border border-zinc-700 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirm}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                  confirm.action === 'delete'
-                    ? 'bg-red-500/20 text-red-300 hover:bg-red-500/30 border border-red-500/30'
-                    : 'bg-white text-zinc-900 hover:bg-zinc-200'
-                }`}
+                className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors bg-white text-zinc-900 hover:bg-zinc-200 cursor-pointer"
               >
-                {confirm.action === 'delete' ? 'Delete' : 'Re-analyze'}
+                Re-analyze
               </button>
             </div>
           </div>

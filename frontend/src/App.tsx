@@ -92,7 +92,7 @@ function App() {
           <div className={`flex items-center h-10 flex-shrink-0 ${sidebarOpen ? 'justify-end px-3' : 'justify-center'}`}>
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="flex items-center justify-center w-7 h-7 rounded-md text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06] transition-colors"
+              className="flex items-center justify-center w-7 h-7 rounded-md text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06] transition-colors cursor-pointer"
               title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
             >
               {sidebarOpen ? <PanelLeftClose size={15} /> : <PanelLeftOpen size={15} />}
@@ -112,6 +112,7 @@ function App() {
                 analyzingRepoName={state.analyzingRepoName}
                 activeRepoName={state.result?.repo_name ?? null}
                 activeRepoUrl={state.result?.repo_url ?? null}
+                activeAnalysisMonths={state.result?.analysis_months ?? null}
                 overviewSlot={
                   <>
                     {state.status === 'analyzing' && (
@@ -133,7 +134,7 @@ function App() {
                         {state.status === 'complete' && (
                           <button
                             onClick={reset}
-                            className="w-full flex items-center justify-center gap-1.5 text-xs text-zinc-500 hover:text-white py-1 transition-colors"
+                            className="w-full flex items-center justify-center gap-1.5 text-xs text-zinc-500 hover:text-white py-1 transition-colors cursor-pointer"
                           >
                             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="flex-shrink-0">
                               <path d="M10 2L4 8l6 6" />
@@ -159,7 +160,7 @@ function App() {
                 <button
                   key={tab}
                   onClick={() => setTab(tab)}
-                  className={`px-4 py-2.5 text-xs font-medium transition-colors relative ${
+                  className={`px-4 py-2.5 text-xs font-medium transition-colors relative cursor-pointer ${
                     state.activeTab === tab
                       ? 'text-white'
                       : 'text-zinc-400 hover:text-white'
