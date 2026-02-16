@@ -7,6 +7,7 @@ interface Props {
   onLoadCached: (slug: string) => void;
   onViewAnalyzing: () => void;
   status: AnalysisStatus;
+  isFormLocked: boolean;
   analyzingRepoName: string | null;
   activeRepoName: string | null;
   activeRepoUrl: string | null;
@@ -14,7 +15,7 @@ interface Props {
   overviewSlot?: React.ReactNode;
 }
 
-export function RepoInput({ onAnalyze, onLoadCached, onViewAnalyzing, status, analyzingRepoName, activeRepoName, activeRepoUrl, activeAnalysisMonths, overviewSlot }: Props) {
+export function RepoInput({ onAnalyze, onLoadCached, onViewAnalyzing, status, isFormLocked, analyzingRepoName, activeRepoName, activeRepoUrl, activeAnalysisMonths, overviewSlot }: Props) {
   const [url, setUrl] = useState('');
   const [months, setMonths] = useState(6);
   const [cachedRepos, setCachedRepos] = useState<CachedRepo[]>([]);
@@ -75,9 +76,6 @@ export function RepoInput({ onAnalyze, onLoadCached, onViewAnalyzing, status, an
   };
 
   const isAnalyzing = status === 'analyzing';
-  // Only block the form when the user is viewing the repo currently being analyzed
-  const isViewingAnalysis = isAnalyzing &&
-    (!activeRepoName || activeRepoName === analyzingRepoName);
 
   const formatTimeAgo = (ts: number) => {
     const diff = Date.now() / 1000 - ts;
@@ -98,15 +96,15 @@ export function RepoInput({ onAnalyze, onLoadCached, onViewAnalyzing, status, an
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://github.com/owner/repo"
             className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/50 focus:border-zinc-400"
-            disabled={isViewingAnalysis}
+            disabled={isFormLocked}
           />
         </div>
         <div ref={timeRef} className="relative">
           <label className="block text-xs font-medium text-zinc-400 mb-1.5">Time Range</label>
           <button
             type="button"
-            onClick={() => !isViewingAnalysis && setTimeOpen((o) => !o)}
-            disabled={isViewingAnalysis}
+            onClick={() => !isFormLocked && setTimeOpen((o) => !o)}
+            disabled={isFormLocked}
             className="w-full flex items-center justify-between px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-zinc-400/50 focus:border-zinc-400 disabled:opacity-50 cursor-pointer disabled:cursor-default"
           >
             <span>Last {months} months</span>
@@ -139,10 +137,10 @@ export function RepoInput({ onAnalyze, onLoadCached, onViewAnalyzing, status, an
         </div>
         <button
           type="submit"
-          disabled={!url.trim() || isViewingAnalysis}
+          disabled={!url.trim() || isFormLocked}
           className="w-full py-2.5 bg-zinc-700 hover:bg-zinc-600 disabled:bg-zinc-800 disabled:text-zinc-600 text-zinc-200 text-sm font-medium rounded-lg transition-colors border border-zinc-600 hover:border-zinc-500 cursor-pointer disabled:cursor-default"
         >
-          {isViewingAnalysis ? 'Analyzing...' : isReanalyze ? 'Re-analyze' : 'Analyze Repository'}
+          {isFormLocked ? 'Analyzing...' : isReanalyze ? 'Re-analyze' : 'Analyze Repository'}
         </button>
       </form>
 

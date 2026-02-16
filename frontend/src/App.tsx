@@ -17,7 +17,7 @@ function getInitialPage(): string | null {
 }
 
 function App() {
-  const { state, analyze, loadCached, viewAnalyzing, selectNode, setTab, reset } = useAnalysis();
+  const { state, isViewingAnalysis, analyze, loadCached, viewAnalyzing, selectNode, setTab, reset } = useAnalysis();
   const mainRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -58,8 +58,6 @@ function App() {
   const hasResult = !!state.result;
   const hasGraph = hasResult && state.result!.graph.nodes.length > 0;
   const hasInsights = hasResult && state.result!.pattern_result.insights.length > 0;
-  const isViewingAnalysis = state.status === 'analyzing' &&
-    (!state.result || state.result.repo_name === state.analyzingRepoName);
 
   // Overall progress across all stages
   const overallProgress = state.status === 'analyzing'
@@ -110,6 +108,7 @@ function App() {
                 onAnalyze={analyze}
                 onLoadCached={loadCached}
                 status={state.status}
+                isFormLocked={isViewingAnalysis}
                 analyzingRepoName={state.analyzingRepoName}
                 activeRepoName={state.result?.repo_name ?? null}
                 activeRepoUrl={state.result?.repo_url ?? null}

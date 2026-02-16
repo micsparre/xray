@@ -360,5 +360,10 @@ export function useAnalysis() {
     pushUrl(null, 'graph');
   }, []);
 
-  return { state, analyze, loadCached, viewAnalyzing, selectNode, setTab, reset };
+  // True when the user is viewing the repo currently being analyzed (form should be locked).
+  // Computed once here as the single source of truth.
+  const isViewingAnalysis = state.status === 'analyzing' &&
+    (!state.result || state.result.repo_name === state.analyzingRepoName);
+
+  return { state, isViewingAnalysis, analyze, loadCached, viewAnalyzing, selectNode, setTab, reset };
 }
