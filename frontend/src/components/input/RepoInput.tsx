@@ -25,7 +25,7 @@ export function RepoInput({ onAnalyze, onLoadCached, onViewAnalyzing, status, is
 
   // Populate the URL input and time range when an analysis is loaded
   useEffect(() => {
-    if (activeRepoUrl) setUrl(activeRepoUrl);
+    setUrl(activeRepoUrl ?? '');
   }, [activeRepoUrl]);
 
   useEffect(() => {
