@@ -130,6 +130,7 @@ export interface AppState {
   currentStage: number;
   stageProgress: number;
   stageMessage: string;
+  analyzingResult: AnalysisResult | null;
   result: AnalysisResult | null;
   selectedNode: GraphNode | null;
   activeTab: 'graph' | 'dashboard' | 'insights';
@@ -143,5 +144,7 @@ export type AppAction =
   | { type: 'COMPLETE'; data: AnalysisResult }
   | { type: 'ERROR'; message: string }
   | { type: 'SELECT_NODE'; node: GraphNode | null }
+  | { type: 'VIEW_CACHED'; data: AnalysisResult }
+  | { type: 'VIEW_ANALYZING' }
   | { type: 'SET_TAB'; tab: 'graph' | 'dashboard' | 'insights' }
   | { type: 'RESET' };

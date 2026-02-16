@@ -18,7 +18,7 @@ function getInitialPage(): string | null {
 }
 
 function App() {
-  const { state, analyze, loadCached, selectNode, setTab, reset } = useAnalysis();
+  const { state, analyze, loadCached, viewAnalyzing, selectNode, setTab, reset } = useAnalysis();
   const mainRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -59,6 +59,8 @@ function App() {
   const hasResult = !!state.result;
   const hasGraph = hasResult && state.result!.graph.nodes.length > 0;
   const hasInsights = hasResult && state.result!.pattern_result.insights.length > 0;
+  const isViewingAnalysis = state.status === 'analyzing' &&
+    (!state.result || state.result.repo_name === state.analyzingRepoName);
 
   // Overall progress across all stages
   const overallProgress = state.status === 'analyzing'
@@ -113,9 +115,10 @@ function App() {
                 activeRepoName={state.result?.repo_name ?? null}
                 activeRepoUrl={state.result?.repo_url ?? null}
                 activeAnalysisMonths={state.result?.analysis_months ?? null}
+                onViewAnalyzing={viewAnalyzing}
                 overviewSlot={
                   <>
-                    {state.status === 'analyzing' && (
+                    {isViewingAnalysis && (
                       <AnalysisProgress
                         currentStage={state.currentStage}
                         stageProgress={state.stageProgress}
@@ -216,7 +219,7 @@ function App() {
               )}
 
               {/* Analyzing placeholder */}
-              {state.status === 'analyzing' && !hasGraph && (
+              {isViewingAnalysis && !hasGraph && (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center animate-fade-in">
                     <div className="w-16 h-16 mx-auto mb-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

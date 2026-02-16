@@ -5,6 +5,7 @@ import { listCached, type CachedRepo } from '../../api/client';
 interface Props {
   onAnalyze: (repoUrl: string, months: number) => void;
   onLoadCached: (slug: string) => void;
+  onViewAnalyzing: () => void;
   status: AnalysisStatus;
   analyzingRepoName: string | null;
   activeRepoName: string | null;
@@ -13,7 +14,7 @@ interface Props {
   overviewSlot?: React.ReactNode;
 }
 
-export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, activeRepoName, activeRepoUrl, activeAnalysisMonths, overviewSlot }: Props) {
+export function RepoInput({ onAnalyze, onLoadCached, onViewAnalyzing, status, analyzingRepoName, activeRepoName, activeRepoUrl, activeAnalysisMonths, overviewSlot }: Props) {
   const [url, setUrl] = useState('');
   const [months, setMonths] = useState(6);
   const [cachedRepos, setCachedRepos] = useState<CachedRepo[]>([]);
@@ -150,7 +151,10 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
           <div className="space-y-1.5">
             {/* Currently analyzing repo */}
             {isAnalyzing && analyzingRepoName && !cachedRepos.some(r => r.repo_name === analyzingRepoName) && (
-              <div className="w-full text-left px-3 py-2 bg-zinc-800/50 border border-orange-500/30 rounded-lg text-xs text-zinc-300">
+              <div
+                onClick={onViewAnalyzing}
+                className="w-full text-left px-3 py-2 bg-zinc-800/50 border border-orange-500/30 rounded-lg text-xs text-zinc-300 cursor-pointer"
+              >
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 border-2 border-orange-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
                   <span className="flex-1 truncate">{analyzingRepoName}</span>
@@ -164,10 +168,8 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
               return (
               <div
                 key={repo.repo_name}
-                onClick={() => { if (!isAnalyzing) onLoadCached(repo.repo_name); }}
-                className={`group w-full text-left px-3 py-2 rounded-lg text-xs transition-colors ${
-                  isAnalyzing ? '' : 'cursor-pointer'
-                } ${
+                onClick={() => { isReanalyzing ? onViewAnalyzing() : onLoadCached(repo.repo_name); }}
+                className={`group w-full text-left px-3 py-2 rounded-lg text-xs transition-colors cursor-pointer ${
                   isReanalyzing
                     ? 'bg-zinc-800/50 border border-orange-500/30 text-zinc-300'
                     : isActive
@@ -176,7 +178,7 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
                 }`}
               >
                 <div
-                  className={`w-full flex items-center gap-2 ${isAnalyzing ? 'opacity-50' : ''}`}
+                  className="w-full flex items-center gap-2"
                 >
                   {isReanalyzing ? (
                     <div className="w-3 h-3 border-2 border-orange-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
@@ -192,15 +194,6 @@ export function RepoInput({ onAnalyze, onLoadCached, status, analyzingRepoName, 
                       {formatTimeAgo(repo.analyzed_at)}
                     </span>
                   )}
-                </div>
-                <div className={`flex gap-1 mt-1.5 transition-opacity ${isReanalyzing ? 'hidden' : 'opacity-0 group-hover:opacity-100'}`}>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setConfirm({ repoName: repo.repo_name, repo }); }}
-                    disabled={isAnalyzing || !repo.repo_url}
-                    className="flex-1 py-1 text-[10px] text-zinc-400 hover:text-white hover:bg-zinc-600/50 rounded transition-colors disabled:opacity-30 cursor-pointer disabled:cursor-default"
-                  >
-                    Re-analyze
-                  </button>
                 </div>
               </div>
               );

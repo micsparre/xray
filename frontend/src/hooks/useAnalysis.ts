@@ -31,13 +31,6 @@ function pushUrl(repoName: string | null, tab: Tab) {
   }
 }
 
-function replaceUrl(repoName: string | null, tab: Tab) {
-  const path = buildPath(repoName, tab);
-  if (window.location.pathname !== path) {
-    window.history.replaceState(null, '', path);
-  }
-}
-
 function repoNameFromUrl(repoUrl: string): string {
   const cleaned = repoUrl.trim().replace(/\/+$/, '').replace(/\.git$/, '');
   const parts = cleaned.split('/').filter(Boolean);
@@ -72,6 +65,7 @@ const initialState: AppState = {
   currentStage: 0,
   stageProgress: 0,
   stageMessage: '',
+  analyzingResult: null,
   result: null,
   selectedNode: null,
   activeTab: parseRoute().tab,
@@ -97,34 +91,40 @@ function reducer(state: AppState, action: AppAction): AppState {
     case 'PARTIAL_RESULT': {
       // Preserve graph reference if the graph hasn't meaningfully changed,
       // so KnowledgeGraph doesn't re-render and reset the user's viewport.
-      const prevGraph = state.result?.graph;
+      const prevGraph = state.analyzingResult?.graph;
       const newGraph = action.data.graph;
       const graphChanged = !prevGraph ||
         prevGraph.nodes.length !== newGraph.nodes.length ||
         prevGraph.links.length !== newGraph.links.length ||
         prevGraph.links.some((l, i) => l.expertise_depth !== newGraph.links[i]?.expertise_depth);
+      const updatedData = {
+        ...action.data,
+        graph: graphChanged ? newGraph : prevGraph,
+      };
+      const isViewingAnalysis = !state.result || state.result.repo_name === state.analyzingRepoName;
       return {
         ...state,
-        result: {
-          ...action.data,
-          graph: graphChanged ? newGraph : prevGraph,
-        },
+        analyzingResult: updatedData,
+        result: isViewingAnalysis ? updatedData : state.result,
       };
     }
     case 'COMPLETE': {
-      const prevGraph = state.result?.graph;
+      const prevGraph = state.analyzingResult?.graph;
       const newGraph = action.data.graph;
       const graphChanged = !prevGraph ||
         prevGraph.nodes.length !== newGraph.nodes.length ||
         prevGraph.links.length !== newGraph.links.length ||
         prevGraph.links.some((l, i) => l.expertise_depth !== newGraph.links[i]?.expertise_depth);
+      const updatedData = {
+        ...action.data,
+        graph: graphChanged ? newGraph : prevGraph,
+      };
+      const isViewingAnalysis = !state.result || state.result.repo_name === state.analyzingRepoName;
       return {
         ...state,
         status: 'complete',
-        result: {
-          ...action.data,
-          graph: graphChanged ? newGraph : prevGraph,
-        },
+        analyzingResult: updatedData,
+        result: isViewingAnalysis ? updatedData : state.result,
         currentStage: 5,
         stageProgress: 1,
         stageMessage: 'Analysis complete!',
@@ -136,6 +136,10 @@ function reducer(state: AppState, action: AppAction): AppState {
         status: 'error',
         error: action.message,
       };
+    case 'VIEW_CACHED':
+      return { ...state, result: action.data, selectedNode: null };
+    case 'VIEW_ANALYZING':
+      return { ...state, result: state.analyzingResult, selectedNode: null };
     case 'SELECT_NODE':
       return { ...state, selectedNode: action.node };
     case 'SET_TAB':
@@ -182,7 +186,6 @@ export function useAnalysis() {
         case 'complete':
           if (msg.data) {
             dispatch({ type: 'COMPLETE', data: msg.data });
-            pushUrl(msg.data.repo_name, 'graph');
           }
           clearActiveJob();
           ws.close();
@@ -245,14 +248,6 @@ export function useAnalysis() {
     }
   }, [connectWebSocket]);
 
-  // Sync URL when result or tab changes
-  useEffect(() => {
-    const repoName = state.result?.repo_name ?? null;
-    if (state.status === 'complete' || state.result) {
-      replaceUrl(repoName, state.activeTab);
-    }
-  }, [state.result, state.activeTab, state.status]);
-
   // Handle browser back/forward
   useEffect(() => {
     const onPopState = () => {
@@ -296,17 +291,29 @@ export function useAnalysis() {
 
   const loadCached = useCallback(async (repoSlug: string) => {
     try {
-      clearActiveJob();
       const data = await getCached(repoSlug);
       if (data && !data.error) {
-        dispatch({ type: 'SELECT_NODE', node: null });
-        dispatch({ type: 'COMPLETE', data });
+        if (state.status === 'analyzing') {
+          // Swap the viewed result without disrupting the in-progress analysis
+          dispatch({ type: 'VIEW_CACHED', data });
+        } else {
+          clearActiveJob();
+          dispatch({ type: 'SELECT_NODE', node: null });
+          dispatch({ type: 'COMPLETE', data });
+        }
         pushUrl(data.repo_name, 'graph');
       }
     } catch (err) {
       dispatch({ type: 'ERROR', message: (err as Error).message });
     }
-  }, []);
+  }, [state.status]);
+
+  const viewAnalyzing = useCallback(() => {
+    dispatch({ type: 'VIEW_ANALYZING' });
+    if (state.analyzingRepoName) {
+      pushUrl(state.analyzingRepoName, 'graph');
+    }
+  }, [state.analyzingRepoName]);
 
   const selectNode = useCallback((node: AppState['selectedNode']) => {
     dispatch({ type: 'SELECT_NODE', node });
@@ -326,5 +333,5 @@ export function useAnalysis() {
     pushUrl(null, 'graph');
   }, []);
 
-  return { state, analyze, loadCached, selectNode, setTab, reset };
+  return { state, analyze, loadCached, viewAnalyzing, selectNode, setTab, reset };
 }

@@ -203,11 +203,11 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
       (node as any)._clusterY = target.y;
     }
 
-    // --- Configure forces — generous spacing for readability ---
+    // --- Configure forces — scale with graph size for readability ---
     const n = data.nodes.length;
-    const chargeStrength = n > 40 ? -300 : n > 20 ? -220 : -160;
+    const chargeStrength = -(Math.max(160, 100 + n * 4));
     fg.d3Force('charge')?.strength(chargeStrength).distanceMin(30);
-    fg.d3Force('link')?.distance(120).strength(0.5);
+    fg.d3Force('link')?.distance(n > 60 ? 160 : 120).strength(0.5);
 
     // Pull nodes toward their cluster's target position
     const clusterGravity = numClusters <= 1 ? 0.03 : 0.06;
@@ -562,6 +562,9 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
     [animProgress]
   );
 
+  // Pre-compute layout before first render so users never see the clumped state
+  const warmupTicks = useMemo(() => Math.max(100, data.nodes.length), [data.nodes.length]);
+
   return (
     <div ref={containerRef} className="relative w-full h-full bg-[#09090b]">
       <ForceGraph2D
@@ -576,6 +579,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
         onNodeHover={handleNodeHover}
         onZoom={handleZoom}
         nodeId="id"
+        warmupTicks={warmupTicks}
         cooldownTicks={100}
         autoPauseRedraw={false}
         enableZoomInteraction={true}
