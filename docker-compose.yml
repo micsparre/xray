@@ -24,6 +24,9 @@ services:
       dockerfile: frontend/Dockerfile
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
     deploy:
       resources:
         limits:
@@ -38,5 +41,6 @@ volumes:
   clone-data:
     driver_opts:
       type: tmpfs
+      device: tmpfs
       o: "size=4g"
   cache-data:

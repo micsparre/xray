@@ -23,9 +23,15 @@ dist/
 /tmp/
 *.log
 
+# Cached analysis results
+cached_results/*.json
+
 # Screenshots (dev only)
 screenshots/
 /*.png
 
 # Playwright MCP
 .playwright-mcp/
+
+# keys
+**/*.pem
