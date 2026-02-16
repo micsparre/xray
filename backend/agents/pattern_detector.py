@@ -66,10 +66,9 @@ async def detect_patterns(result: AnalysisResult) -> PatternDetectionResult:
         text = ""
         async with client.messages.stream(
             model=ANTHROPIC_MODEL,
-            max_tokens=16000,
+            max_tokens=PATTERN_THINKING_BUDGET,
             thinking={
-                "type": "enabled",
-                "budget_tokens": PATTERN_THINKING_BUDGET,
+                "type": "adaptive",
             },
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": data_summary}],
