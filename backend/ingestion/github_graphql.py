@@ -151,7 +151,7 @@ async def fetch_prs(repo_url: str, months: int = 6) -> list[PRData]:
     cursor: str | None = None
     max_pages = 10  # Safety cap: 10 pages × 100 = 1000 PRs max
 
-    max_retries = 3
+    max_retries = 5
 
     for _ in range(max_pages):
         args = [
@@ -180,11 +180,11 @@ async def fetch_prs(repo_url: str, months: int = 6) -> list[PRData]:
                 break
 
             err = stderr.decode()
-            is_transient = "502" in err or "503" in err or "timeout" in err.lower()
+            is_transient = "502" in err or "503" in err or "504" in err or "timeout" in err.lower() or "try resubmitting" in err.lower()
             if not is_transient:
                 break
 
-            delay = 2 ** attempt
+            delay = 3 ** attempt
             logger.warning(f"GraphQL request failed (attempt {attempt + 1}/{max_retries}): {err.strip()} — retrying in {delay}s")
             await asyncio.sleep(delay)
 

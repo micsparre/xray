@@ -75,7 +75,7 @@ async def run_analysis(
         await emit(WSMessage(type="progress", stage=1, message="Fetching pull requests...", progress=0.5))
         prs: list[PRData] = []
         try:
-            prs = await asyncio.wait_for(fetch_prs(repo_url, months), timeout=120)
+            prs = await asyncio.wait_for(fetch_prs(repo_url, months), timeout=300)
         except asyncio.TimeoutError:
             logger.warning("PR fetch timed out — continuing without PR data")
         except Exception as e:
