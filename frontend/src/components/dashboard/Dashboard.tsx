@@ -254,8 +254,8 @@ export function Dashboard({ result, status, currentStage }: Props) {
         <div className="lg:col-span-2 bg-zinc-900/60 border border-white/[0.06] rounded-xl p-4 space-y-3">
           <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Review Quality</h3>
           {reviewPending ? (
-            <div className="h-48 flex flex-col items-center justify-center gap-3">
-              <div className="w-[150px] h-[150px] rounded-full border-2 border-zinc-700/50 border-t-zinc-400 animate-spin" />
+            <div className="h-48 flex flex-col items-center justify-center gap-2">
+              <div className="w-6 h-6 rounded-full border-2 border-zinc-700/50 border-t-zinc-400 animate-spin" />
               <p className="text-[11px] text-zinc-500">Analyzing reviews…</p>
             </div>
           ) : reviews.length === 0 ? (
