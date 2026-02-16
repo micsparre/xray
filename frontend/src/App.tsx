@@ -189,14 +189,7 @@ function App() {
               {!hasResult && state.status !== 'analyzing' && state.status !== 'error' && (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center max-w-lg animate-fade-in">
-                    <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-zinc-600/20 to-orange-500/20 border border-zinc-500/20 flex items-center justify-center animate-pulse-glow">
-                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-zinc-300">
-                        <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
-                        <path d="M2 12h4M18 12h4M12 2v4M12 18v4" />
-                        <circle cx="12" cy="12" r="4" />
-                      </svg>
-                    </div>
-                    <h2 className="text-xl font-bold text-white mb-3">
+                    <h2 className="text-2xl font-bold text-white mb-3">
                       xray
                     </h2>
                     <p className="text-sm text-zinc-400 mb-2 leading-relaxed">
