@@ -15,7 +15,7 @@ The key insight: **Claude reads actual code diffs** to understand expertise dept
 1. **Ingest** — Clones the repo and fetches git history, blame data, and PR metadata via `gh` CLI
 2. **Analyze** — Claude (Opus) reads sampled PR diffs to classify each contributor's expertise depth per module, and evaluates review quality on merged PRs
 3. **Compute** — Calculates bus factor scores using a Gini coefficient over blame ownership concentration
-4. **Detect** — Extended thinking identifies non-obvious patterns: ghost architects, review rings, hidden experts, knowledge silos
+4. **Deep Thinking** — Extended thinking identifies non-obvious patterns: ghost architects, review rings, hidden experts, knowledge silos
 5. **Visualize** — Interactive knowledge graph + dashboard surfaces the results
 
 ## Features
@@ -24,7 +24,7 @@ The key insight: **Claude reads actual code diffs** to understand expertise dept
 - **Bus Factor Analysis** — Gini coefficient-based ownership concentration per module
 - **AI Code Analysis** — Claude reads PR diffs and classifies expertise depth (surface / working / deep / architect)
 - **AI Review Quality** — Classifies review quality (rubber stamp / surface / thorough / mentoring)
-- **Pattern Detection** — Extended thinking finds non-obvious insights across the full dataset
+- **Deep Thinking** — Extended thinking finds non-obvious insights across the full dataset
 
 ## Prerequisites
 
