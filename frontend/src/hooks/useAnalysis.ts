@@ -348,7 +348,6 @@ export function useAnalysis() {
 
   const setTab = useCallback((tab: AppState['activeTab']) => {
     dispatch({ type: 'SET_TAB', tab });
-    window.scrollTo(0, 0);
     if (state.result) {
       pushUrl(state.result.repo_name, tab);
     }

@@ -160,7 +160,7 @@ function App() {
               {(['graph', 'dashboard', 'insights'] as const).map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setTab(tab)}
+                  onClick={() => { setTab(tab); mainRef.current?.scrollTo(0, 0); }}
                   className={`px-4 py-2.5 text-xs font-medium transition-colors relative cursor-pointer ${
                     state.activeTab === tab
                       ? 'text-white'
