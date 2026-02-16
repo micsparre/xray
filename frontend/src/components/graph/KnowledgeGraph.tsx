@@ -228,6 +228,8 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
 
   const handleNodeHover = useCallback((node: any) => {
     setHoveredNode(node as GraphNode | null);
+    const el = containerRef.current;
+    if (el) el.style.cursor = node ? 'pointer' : '';
   }, []);
 
   // Bypass the library's click/drag detection entirely.
