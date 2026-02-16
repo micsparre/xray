@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Cell, ResponsiveContainer,
   PieChart, Pie,
 } from 'recharts';
-import type { AnalysisResult, ModuleStats, ReviewClassification } from '../../types';
+import type { AnalysisResult, AnalysisStatus, ModuleStats, ReviewClassification } from '../../types';
 import { riskBadgeColor, cleanUsername } from '../../lib/graph-utils';
 
 /* ─── constants ────────────────────────────────────────── */
@@ -101,9 +101,11 @@ function RiskTooltip({ active, payload }: { active?: boolean; payload?: Array<{ 
 
 interface Props {
   result: AnalysisResult;
+  status: AnalysisStatus;
+  currentStage: number;
 }
 
-export function Dashboard({ result }: Props) {
+export function Dashboard({ result, status, currentStage }: Props) {
   const { modules, contributors, review_classifications: reviews } = result;
 
   // Build email → name lookup
@@ -142,6 +144,8 @@ export function Dashboard({ result }: Props) {
     const WEIGHTS: Record<string, number> = { mentoring: 1, thorough: 0.75, surface: 0.35, rubber_stamp: 0 };
     return reviews.reduce((s, r) => s + (WEIGHTS[r.quality] ?? 0.5), 0) / reviews.length;
   }, [reviews]);
+
+  const reviewPending = status === 'analyzing' && currentStage <= 4 && reviews.length === 0;
 
   // Health = weighted average of bus factor health + review quality
   const healthScore = modules.length > 0 ? avgBusFactor * 0.6 + avgReviewScore * 0.4 : avgReviewScore;
@@ -199,9 +203,9 @@ export function Dashboard({ result }: Props) {
         />
         <HeroCard
           label="Review Quality"
-          value={`${(avgReviewScore * 100).toFixed(0)}%`}
-          sub={`${reviews.length} reviews analyzed`}
-          accent={avgReviewScore < 0.4 ? RISK_COLORS.critical : avgReviewScore < 0.6 ? RISK_COLORS.moderate : RISK_COLORS.low}
+          value={reviewPending ? '—' : `${(avgReviewScore * 100).toFixed(0)}%`}
+          sub={reviewPending ? 'Waiting for analysis…' : `${reviews.length} reviews analyzed`}
+          accent={reviewPending ? '#71717a' : avgReviewScore < 0.4 ? RISK_COLORS.critical : avgReviewScore < 0.6 ? RISK_COLORS.moderate : RISK_COLORS.low}
         />
       </div>
 
@@ -249,8 +253,15 @@ export function Dashboard({ result }: Props) {
         {/* Review quality donut — narrower */}
         <div className="lg:col-span-2 bg-zinc-900/60 border border-white/[0.06] rounded-xl p-4 space-y-3">
           <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Review Quality</h3>
-          {reviews.length === 0 ? (
-            <p className="text-xs text-zinc-500 py-8 text-center">No review data</p>
+          {reviewPending ? (
+            <div className="h-48 flex flex-col items-center justify-center gap-3">
+              <div className="w-[150px] h-[150px] rounded-full border-2 border-zinc-700/50 border-t-zinc-400 animate-spin" />
+              <p className="text-[11px] text-zinc-500">Analyzing reviews…</p>
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="h-48 flex items-center justify-center">
+              <p className="text-xs text-zinc-500">No review data</p>
+            </div>
           ) : (
             <>
               <div className="h-48 flex items-center justify-center">
@@ -389,7 +400,7 @@ function RiskRow({ mod, index, maxCommits, displayName }: { mod: ModuleStats; in
       </span>
 
       {/* Risk badge */}
-      <span className={`text-[10px] px-1.5 py-0.5 rounded border shrink-0 ${riskBadgeColor(risk)}`}>
+      <span className={`text-[10px] px-1.5 py-0.5 rounded border shrink-0 w-14 text-center ${riskBadgeColor(risk)}`}>
         {risk}
       </span>
 

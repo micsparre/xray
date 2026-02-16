@@ -75,6 +75,9 @@ export function RepoInput({ onAnalyze, onLoadCached, onViewAnalyzing, status, an
   };
 
   const isAnalyzing = status === 'analyzing';
+  // Only block the form when the user is viewing the repo currently being analyzed
+  const isViewingAnalysis = isAnalyzing &&
+    (!activeRepoName || activeRepoName === analyzingRepoName);
 
   const formatTimeAgo = (ts: number) => {
     const diff = Date.now() / 1000 - ts;
@@ -95,15 +98,15 @@ export function RepoInput({ onAnalyze, onLoadCached, onViewAnalyzing, status, an
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://github.com/owner/repo"
             className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/50 focus:border-zinc-400"
-            disabled={isAnalyzing}
+            disabled={isViewingAnalysis}
           />
         </div>
         <div ref={timeRef} className="relative">
           <label className="block text-xs font-medium text-zinc-400 mb-1.5">Time Range</label>
           <button
             type="button"
-            onClick={() => !isAnalyzing && setTimeOpen((o) => !o)}
-            disabled={isAnalyzing}
+            onClick={() => !isViewingAnalysis && setTimeOpen((o) => !o)}
+            disabled={isViewingAnalysis}
             className="w-full flex items-center justify-between px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-zinc-400/50 focus:border-zinc-400 disabled:opacity-50 cursor-pointer disabled:cursor-default"
           >
             <span>Last {months} months</span>
@@ -136,10 +139,10 @@ export function RepoInput({ onAnalyze, onLoadCached, onViewAnalyzing, status, an
         </div>
         <button
           type="submit"
-          disabled={!url.trim() || isAnalyzing}
+          disabled={!url.trim() || isViewingAnalysis}
           className="w-full py-2.5 bg-zinc-700 hover:bg-zinc-600 disabled:bg-zinc-800 disabled:text-zinc-600 text-zinc-200 text-sm font-medium rounded-lg transition-colors border border-zinc-600 hover:border-zinc-500 cursor-pointer disabled:cursor-default"
         >
-          {isAnalyzing ? 'Analyzing...' : isReanalyze ? 'Re-analyze' : 'Analyze Repository'}
+          {isViewingAnalysis ? 'Analyzing...' : isReanalyze ? 'Re-analyze' : 'Analyze Repository'}
         </button>
       </form>
 

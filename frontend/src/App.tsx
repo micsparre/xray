@@ -257,7 +257,7 @@ function App() {
 
               {/* Dashboard tab */}
               {hasResult && state.activeTab === 'dashboard' && (
-                <Dashboard result={state.result!} />
+                <Dashboard result={state.result!} status={state.status} currentStage={state.currentStage} />
               )}
 
               {/* Insights tab */}
