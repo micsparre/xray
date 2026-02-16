@@ -71,6 +71,7 @@ class PRReview(BaseModel):
     state: str
     body: str = ""
     is_bot: bool = False
+    review_comments: list[str] = []  # line-level review comment bodies
 
 
 class PRData(BaseModel):

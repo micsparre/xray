@@ -92,7 +92,7 @@ MAX_PRS_REVIEW_ANALYSIS = int(os.getenv("MAX_PRS_REVIEW_ANALYSIS", "20"))
 MAX_BLAME_FILES = int(os.getenv("MAX_BLAME_FILES", "30"))
 DIFF_TRUNCATE_CHARS = int(os.getenv("DIFF_TRUNCATE_CHARS", "8000"))
 AI_CALL_TIMEOUT = int(os.getenv("AI_CALL_TIMEOUT", "60"))
-PATTERN_THINKING_BUDGET = int(os.getenv("PATTERN_THINKING_BUDGET", "10000"))
+PATTERN_THINKING_BUDGET = int(os.getenv("PATTERN_THINKING_BUDGET", "128000"))
 CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:5174,http://localhost:3000").split(",")
 
 # Production hardening

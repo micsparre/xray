@@ -29,7 +29,9 @@ Given a PR's reviews (reviewer name, state, body text), classify each review:
 - **summary**: One sentence about this review's quality
 
 ## Rules
-- If the review body is empty or <10 words, classify as rubber_stamp regardless of approval state.
+- A review includes both the top-level body AND line-level comments on specific code changes.
+- Only classify as rubber_stamp if BOTH the body is empty/trivial AND there are zero line comments.
+- A reviewer with an empty body but multiple line comments is NOT a rubber stamp — judge quality by the comment content.
 - CHANGES_REQUESTED doesn't automatically mean thorough — check the content.
 - Be calibrated. Most reviews are surface or rubber_stamp. Mentoring is RARE.
 
@@ -47,10 +49,23 @@ async def analyze_pr_reviews(pr: PRData) -> list[ReviewClassification]:
     """Analyze review quality for a single PR."""
     client = get_client()
 
-    reviews_text = "\n\n".join([
-        f"Reviewer: {r.author}\nState: {r.state}\nBody: {r.body or '(empty)'}"
-        for r in pr.reviews
-    ])
+    review_parts = []
+    for r in pr.reviews:
+        part = f"Reviewer: {r.author}\nState: {r.state}\nBody: {r.body or '(empty)'}"
+        if r.review_comments:
+            # Include up to 15 line comments to stay within token limits
+            comments_preview = r.review_comments[:15]
+            part += f"\nLine comments ({len(r.review_comments)} total):"
+            for j, c in enumerate(comments_preview, 1):
+                # Truncate long comments
+                snippet = c[:300] + "..." if len(c) > 300 else c
+                part += f"\n  {j}. {snippet}"
+            if len(r.review_comments) > 15:
+                part += f"\n  ... and {len(r.review_comments) - 15} more comments"
+        else:
+            part += "\nLine comments: none"
+        review_parts.append(part)
+    reviews_text = "\n\n".join(review_parts)
 
     user_message = f"""PR #{pr.number}: {pr.title}
 Author: {pr.author}
@@ -100,7 +115,7 @@ Author: {pr.author}
                 ReviewClassification(
                     pr_number=pr.number,
                     reviewer=r.author,
-                    quality="rubber_stamp" if len(r.body.strip()) < 10 else "surface",
+                    quality="rubber_stamp" if (len(r.body.strip()) < 10 and not r.review_comments) else "surface",
                     summary=f"Analysis failed: {type(e).__name__}",
                 )
                 for r in pr.reviews

@@ -30,12 +30,20 @@ def rank_prs(prs: list[PRData], top_n: int = 30) -> list[PRData]:
     return [pr for _, pr in scored[:top_n]]
 
 
+def _review_has_content(r) -> bool:
+    """Check if a review has any meaningful content (body or line comments)."""
+    return bool(r.body.strip()) or bool(r.review_comments)
+
+
 def get_prs_with_reviews(prs: list[PRData], top_n: int = 20) -> list[PRData]:
     """Filter to PRs that actually have review content."""
     with_reviews = [
         pr for pr in prs
-        if any(r.body.strip() for r in pr.reviews)
+        if any(_review_has_content(r) for r in pr.reviews)
     ]
-    # Sort by review depth
-    with_reviews.sort(key=lambda pr: sum(len(r.body) for r in pr.reviews), reverse=True)
+    # Sort by review depth (body length + comment count)
+    with_reviews.sort(
+        key=lambda pr: sum(len(r.body) + len(r.review_comments) * 100 for r in pr.reviews),
+        reverse=True,
+    )
     return with_reviews[:top_n]

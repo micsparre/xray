@@ -53,6 +53,7 @@ def _merge_reviews(reviews: list[PRReview]) -> list[PRReview]:
                 state=r.state,  # last state wins (chronological order from API)
                 body=combined_body,
                 is_bot=r.is_bot,
+                review_comments=prev.review_comments + r.review_comments,
             )
     return list(by_author.values())
 
@@ -68,6 +69,11 @@ def _parse_node(node: dict) -> PRData:
             state=r["state"],
             body=r.get("body", ""),
             is_bot=_is_bot_typename(r.get("author")),
+            review_comments=[
+                c["body"]
+                for c in (r.get("comments", {}).get("nodes", []) or [])
+                if c.get("body", "").strip()
+            ],
         )
         for r in (node.get("reviews", {}).get("nodes", []) or [])
         if (r.get("author", {}) or {}).get("login") != author_login
@@ -130,6 +136,9 @@ async def fetch_prs(repo_url: str, months: int = 6) -> list[PRData]:
                 author { login __typename }
                 state
                 body
+                comments(first: 30) {
+                  nodes { body }
+                }
               }
             }
           }

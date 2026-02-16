@@ -9,7 +9,7 @@ const STAGES = [
   { num: 2, label: 'Statistical Analysis' },
   { num: 3, label: 'Code Analysis (AI)' },
   { num: 4, label: 'Review Analysis (AI)' },
-  { num: 5, label: 'Pattern Detection (AI)' },
+  { num: 5, label: 'Deep Reasoning (AI)' },
 ];
 
 export function AnalysisProgress({ currentStage, stageProgress, stageMessage }: Props) {

@@ -264,12 +264,12 @@ function App() {
               {hasResult && state.activeTab === 'insights' && (
                 <div className="p-6 animate-fade-in">
                   {hasInsights ? (
-                    <InsightCards patternResult={state.result!.pattern_result} />
+                    <InsightCards patternResult={state.result!.pattern_result} repoUrl={state.result!.repo_url} />
                   ) : (
                     <div className="text-center py-12">
                       <p className="text-sm text-zinc-400">
                         {state.status === 'analyzing'
-                          ? 'Pattern detection in progress...'
+                          ? 'Deep reasoning in progress...'
                           : 'No insights generated yet.'}
                       </p>
                     </div>

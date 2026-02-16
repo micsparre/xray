@@ -207,15 +207,15 @@ async def run_analysis(
                 data=result.model_dump(),
             ))
 
-        # ── Stage 5: AI Pattern Detection ──
-        await emit(WSMessage(type="progress", stage=5, message="Detecting hidden patterns (extended thinking)...", progress=0.0))
+        # ── Stage 5: Deep Reasoning ──
+        await emit(WSMessage(type="progress", stage=5, message="Deep reasoning with extended thinking...", progress=0.0))
 
         try:
             pattern_result = await detect_patterns(result)
             result.pattern_result = pattern_result
         except Exception as e:
-            logger.error(f"Pattern detection failed: {e}")
-            # Result still usable without pattern detection
+            logger.error(f"Deep reasoning failed: {e}")
+            # Result still usable without deep reasoning
 
         await emit(WSMessage(
             type="complete",

@@ -57,7 +57,7 @@ Respond with JSON:
 
 
 async def detect_patterns(result: AnalysisResult) -> PatternDetectionResult:
-    """Run pattern detection with extended thinking on aggregated data (streaming)."""
+    """Run deep reasoning with extended thinking on aggregated data (streaming)."""
     client = get_client()
     data_summary = _build_data_summary(result)
 
@@ -103,16 +103,16 @@ async def detect_patterns(result: AnalysisResult) -> PatternDetectionResult:
         )
 
     except json.JSONDecodeError as e:
-        logger.error(f"Pattern detection JSON parse failed: {e}\nRaw text: {text[:500]}")
+        logger.error(f"Deep reasoning JSON parse failed: {e}\nRaw text: {text[:500]}")
         return PatternDetectionResult(
-            executive_summary="Pattern detection completed but output parsing failed.",
+            executive_summary="Deep reasoning completed but output parsing failed.",
             insights=[],
             recommendations=[],
         )
     except Exception as e:
-        logger.error(f"Pattern detection failed: {e}")
+        logger.error(f"Deep reasoning failed: {e}")
         return PatternDetectionResult(
-            executive_summary=f"Pattern detection encountered an error: {type(e).__name__}",
+            executive_summary=f"Deep reasoning encountered an error: {type(e).__name__}",
             insights=[],
             recommendations=[],
         )

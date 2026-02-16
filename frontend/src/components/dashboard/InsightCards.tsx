@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import type { PatternDetectionResult, InsightCard } from '../../types';
 
 /* ─── constants ────────────────────────────────────────── */
@@ -65,9 +65,10 @@ function CategoryIcon({ category, className }: { category: string; className?: s
 
 interface Props {
   patternResult: PatternDetectionResult;
+  repoUrl?: string;
 }
 
-export function InsightCards({ patternResult }: Props) {
+export function InsightCards({ patternResult, repoUrl }: Props) {
   const [filter, setFilter] = useState<string>('all');
 
   // Severity counts for stat bar
@@ -132,7 +133,7 @@ export function InsightCards({ patternResult }: Props) {
             <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Executive Summary</h3>
           </div>
           <p className="text-sm text-zinc-300 leading-relaxed">
-            {stripEmails(patternResult.executive_summary)}
+            {linkifyPRs(stripEmails(patternResult.executive_summary), repoUrl)}
           </p>
         </div>
       )}
@@ -174,7 +175,7 @@ export function InsightCards({ patternResult }: Props) {
       {filtered.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {filtered.map((insight, i) => (
-            <InsightCardItem key={`${insight.category}-${insight.title}-${i}`} insight={insight} />
+            <InsightCardItem key={`${insight.category}-${insight.title}-${i}`} insight={insight} repoUrl={repoUrl} />
           ))}
         </div>
       )}
@@ -199,7 +200,7 @@ export function InsightCards({ patternResult }: Props) {
                 >
                   {i + 1}.
                 </span>
-                <span className="leading-relaxed">{stripEmails(rec)}</span>
+                <span className="leading-relaxed">{linkifyPRs(stripEmails(rec), repoUrl)}</span>
               </div>
             ))}
           </div>
@@ -230,9 +231,42 @@ function isEmail(s: string): boolean {
   return /^[\w.+-]+@[\w.-]+\.\w+$/.test(s);
 }
 
+/** Turn PR references like PR#123 or #123 into clickable GitHub links */
+const PR_REF_RE = /(?:PR)?#(\d{2,})/g;
+
+function linkifyPRs(text: string, repoUrl?: string): React.ReactNode {
+  if (!repoUrl) return text;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  const re = new RegExp(PR_REF_RE.source, 'g');
+  while ((match = re.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+    const prNum = match[1];
+    const baseUrl = repoUrl.replace(/\/$/, '');
+    parts.push(
+      <a
+        key={`pr-${match.index}`}
+        href={`${baseUrl}/pull/${prNum}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300/50 transition-colors"
+      >
+        {match[0]}
+      </a>
+    );
+    lastIndex = re.lastIndex;
+  }
+  if (lastIndex === 0) return text;
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts;
+}
+
 /* ─── Insight card ─────────────────────────────────────── */
 
-function InsightCardItem({ insight }: { insight: InsightCard }) {
+function InsightCardItem({ insight, repoUrl }: { insight: InsightCard; repoUrl?: string }) {
   const sevMeta = SEVERITY_META[insight.severity] ?? { color: '#71717a', label: insight.severity, order: 9 };
   const catMeta = CATEGORY_META[insight.category] ?? { color: '#71717a', label: insight.category };
   const isCritical = insight.severity === 'critical';
@@ -276,7 +310,7 @@ function InsightCardItem({ insight }: { insight: InsightCard }) {
         </div>
 
         {/* Description */}
-        <p className="text-xs text-zinc-400 leading-relaxed">{stripEmails(insight.description)}</p>
+        <p className="text-xs text-zinc-400 leading-relaxed">{linkifyPRs(stripEmails(insight.description), repoUrl)}</p>
 
         {/* Tags */}
         {(insight.people.filter((p) => !isEmail(p)).length > 0 || insight.modules.length > 0) && (

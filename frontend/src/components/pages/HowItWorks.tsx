@@ -53,14 +53,14 @@ const stages = [
   },
   {
     num: 5,
-    title: 'Pattern Detection',
+    title: 'Deep Reasoning',
     description:
-      'Claude uses extended thinking to synthesize all signals into actionable insights about team dynamics.',
+      'Opus 4.6 uses extended thinking to reason deeply across all collected signals — surfacing insights no dashboard or metric could reveal.',
     details: [
-      'Extended thinking mode for deep multi-step reasoning',
-      'Identifies knowledge silos, single points of failure, and collaboration gaps',
-      'Generates prioritized recommendations for team resilience',
-      'Produces a narrative summary connecting statistical and AI findings',
+      'Extended thinking mode for deep multi-step reasoning across all data',
+      'Synthesizes statistics, expertise classifications, and review quality into a unified picture',
+      'Identifies knowledge silos, hidden experts, bus factor crises, and review blindspots',
+      'Produces an executive summary and prioritized recommendations for team leads',
     ],
   },
 ];
