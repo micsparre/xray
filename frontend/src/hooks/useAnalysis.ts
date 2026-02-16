@@ -119,7 +119,8 @@ function reducer(state: AppState, action: AppAction): AppState {
         ...action.data,
         graph: graphChanged ? newGraph : prevGraph,
       };
-      const isViewingAnalysis = !state.result || state.result.repo_name === state.analyzingRepoName;
+      // Update result when: no result loaded, no active analysis (loading cached), or viewing the analysis in progress
+      const isViewingAnalysis = !state.result || !state.analyzingRepoName || state.result.repo_name === state.analyzingRepoName;
       return {
         ...state,
         status: 'complete',
