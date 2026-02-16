@@ -285,6 +285,8 @@ function App() {
                   node={state.selectedNode}
                   result={state.result!}
                   onClose={() => selectNode(null)}
+                  status={state.status}
+                  currentStage={state.currentStage}
                 />
               </div>
             )}

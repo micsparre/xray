@@ -20,7 +20,7 @@ export const GraphSearchBar = forwardRef<HTMLInputElement, Props>(
     const showRiskFilters = typeFilters.has('module');
 
     return (
-      <div className="absolute top-4 left-4 z-50 flex flex-col gap-2">
+      <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
         {/* Search input row */}
         <div className="flex items-center gap-2 bg-zinc-900/90 backdrop-blur-md border border-zinc-700/40 rounded-xl px-3 py-2 shadow-2xl min-w-[280px]">
           {/* Magnifying glass */}

@@ -1,14 +1,20 @@
-import type { GraphNode, AnalysisResult, ModuleStats } from '../../types';
+import type { GraphNode, AnalysisResult, ModuleStats, AnalysisStatus } from '../../types';
 import { riskBadgeColor, cleanUsername } from '../../lib/graph-utils';
 
 interface Props {
   node: GraphNode;
   result: AnalysisResult;
   onClose: () => void;
+  status?: AnalysisStatus;
+  currentStage?: number;
 }
 
-export function DetailPanel({ node, result, onClose }: Props) {
+export function DetailPanel({ node, result, onClose, status = 'complete', currentStage = 5 }: Props) {
   const isModule = node.type === 'module';
+  const isAnalyzing = status === 'analyzing';
+  // Stage 3 = expertise analysis, Stage 4 = review analysis
+  const expertiseDone = !isAnalyzing || currentStage > 3;
+  const reviewsDone = !isAnalyzing || currentStage > 4;
 
   return (
     <div className="w-80 h-full bg-zinc-900/95 backdrop-blur-lg border-l border-zinc-800 overflow-y-auto flex flex-col">
@@ -45,14 +51,14 @@ export function DetailPanel({ node, result, onClose }: Props) {
         {isModule ? (
           <ModuleDetail node={node} result={result} />
         ) : (
-          <ContributorDetail node={node} result={result} />
+          <ContributorDetail node={node} result={result} expertiseDone={expertiseDone} reviewsDone={reviewsDone} />
         )}
       </div>
     </div>
   );
 }
 
-function ContributorDetail({ node, result }: { node: GraphNode; result: AnalysisResult }) {
+function ContributorDetail({ node, result, expertiseDone, reviewsDone }: { node: GraphNode; result: AnalysisResult; expertiseDone: boolean; reviewsDone: boolean }) {
   const email = node.id.replace('c:', '');
   const contributor = result.contributors.find((c) => c.email === email);
   const repoBase = result.repo_url.replace(/\.git$/, '').replace(/\/$/, '');
@@ -88,8 +94,10 @@ function ContributorDetail({ node, result }: { node: GraphNode; result: Analysis
         </div>
       )}
 
-      {expertiseRecords.length > 0 && (
-        <Section title="Expertise" subtitle="AI-classified">
+      <Section title="Expertise" subtitle="AI-classified">
+        {!expertiseDone ? (
+          <SectionLoading label="Analyzing expertise" />
+        ) : expertiseRecords.length > 0 ? (
           <div className="space-y-1.5">
             {expertiseRecords.map((e) => (
               <div key={e.pr_number} className="bg-zinc-800/40 border border-zinc-800/60 rounded-lg p-2.5">
@@ -106,11 +114,15 @@ function ContributorDetail({ node, result }: { node: GraphNode; result: Analysis
               </div>
             ))}
           </div>
-        </Section>
-      )}
+        ) : (
+          <p className="text-[11px] text-zinc-600">No expertise data for this contributor.</p>
+        )}
+      </Section>
 
-      {reviewRecords.length > 0 && (
-        <Section title="Review quality">
+      <Section title="Review quality">
+        {!reviewsDone ? (
+          <SectionLoading label="Analyzing reviews" />
+        ) : reviewRecords.length > 0 ? (
           <div className="space-y-1.5">
             {reviewRecords.map((r, i) => (
               <div key={i} className="bg-zinc-800/40 border border-zinc-800/60 rounded-lg p-2.5">
@@ -127,8 +139,10 @@ function ContributorDetail({ node, result }: { node: GraphNode; result: Analysis
               </div>
             ))}
           </div>
-        </Section>
-      )}
+        ) : (
+          <p className="text-[11px] text-zinc-600">No review data for this contributor.</p>
+        )}
+      </Section>
     </div>
   );
 }
@@ -219,6 +233,15 @@ function Section({ title, subtitle, children }: { title: string; subtitle?: stri
         {subtitle && <span className="text-[10px] text-zinc-600">({subtitle})</span>}
       </div>
       {children}
+    </div>
+  );
+}
+
+function SectionLoading({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-2 py-2">
+      <div className="w-3 h-3 border border-zinc-600 border-t-zinc-400 rounded-full animate-spin" />
+      <span className="text-[11px] text-zinc-500">{label}...</span>
     </div>
   );
 }

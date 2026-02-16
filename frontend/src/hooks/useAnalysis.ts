@@ -1,6 +1,6 @@
 import { useReducer, useCallback, useRef, useEffect } from 'react';
 import { startAnalysis, createWebSocket, getCached, getJobStatus } from '../api/client';
-import type { AppState, AppAction, WSMessage } from '../types';
+import type { AppState, AppAction, WSMessage, GraphData, GraphLink } from '../types';
 
 type Tab = AppState['activeTab'];
 const VALID_TABS: Tab[] = ['graph', 'dashboard', 'insights'];
@@ -58,6 +58,49 @@ function clearActiveJob() {
   sessionStorage.removeItem(SESSION_KEY);
 }
 
+/**
+ * Merge new graph data into the previous graph, preserving d3-force positions
+ * (x/y/vx/vy) when topology is unchanged. Returns the same reference if merged
+ * in-place, or the new graph if topology changed. This prevents KnowledgeGraph
+ * from re-animating and resetting the user's viewport on every partial result.
+ */
+function mergeGraphData(prev: GraphData | null | undefined, next: GraphData): GraphData {
+  if (!prev ||
+      prev.nodes.length !== next.nodes.length ||
+      prev.links.length !== next.links.length) {
+    return next;
+  }
+
+  // Same topology — update display properties in-place, preserve positions
+  const nodeMap = new Map(next.nodes.map(n => [n.id, n]));
+  for (const node of prev.nodes) {
+    const updated = nodeMap.get(node.id);
+    if (updated) {
+      node.size = updated.size;
+      node.color = updated.color;
+      node.expertise_areas = updated.expertise_areas;
+      node.bus_factor = updated.bus_factor;
+      node.risk_level = updated.risk_level;
+    }
+  }
+
+  const linkKey = (l: GraphLink) => {
+    const s = typeof l.source === 'string' ? l.source : l.source.id;
+    const t = typeof l.target === 'string' ? l.target : l.target.id;
+    return `${s}\0${t}`;
+  };
+  const linkMap = new Map(next.links.map(l => [linkKey(l), l]));
+  for (const link of prev.links) {
+    const updated = linkMap.get(linkKey(link));
+    if (updated) {
+      link.expertise_depth = updated.expertise_depth;
+      link.weight = updated.weight;
+    }
+  }
+
+  return prev; // Same reference — no re-animation
+}
+
 const initialState: AppState = {
   status: 'idle',
   jobId: null,
@@ -89,18 +132,9 @@ function reducer(state: AppState, action: AppAction): AppState {
         stageMessage: action.message,
       };
     case 'PARTIAL_RESULT': {
-      // Preserve graph reference if the graph hasn't meaningfully changed,
-      // so KnowledgeGraph doesn't re-render and reset the user's viewport.
-      const prevGraph = state.analyzingResult?.graph;
-      const newGraph = action.data.graph;
-      const graphChanged = !prevGraph ||
-        prevGraph.nodes.length !== newGraph.nodes.length ||
-        prevGraph.links.length !== newGraph.links.length ||
-        prevGraph.links.some((l, i) => l.expertise_depth !== newGraph.links[i]?.expertise_depth);
-      const updatedData = {
-        ...action.data,
-        graph: graphChanged ? newGraph : prevGraph,
-      };
+      if (state.status !== 'analyzing') return state;
+      const graph = mergeGraphData(state.analyzingResult?.graph, action.data.graph);
+      const updatedData = { ...action.data, graph };
       const isViewingAnalysis = !state.result || state.result.repo_name === state.analyzingRepoName;
       return {
         ...state,
@@ -109,16 +143,8 @@ function reducer(state: AppState, action: AppAction): AppState {
       };
     }
     case 'COMPLETE': {
-      const prevGraph = state.analyzingResult?.graph;
-      const newGraph = action.data.graph;
-      const graphChanged = !prevGraph ||
-        prevGraph.nodes.length !== newGraph.nodes.length ||
-        prevGraph.links.length !== newGraph.links.length ||
-        prevGraph.links.some((l, i) => l.expertise_depth !== newGraph.links[i]?.expertise_depth);
-      const updatedData = {
-        ...action.data,
-        graph: graphChanged ? newGraph : prevGraph,
-      };
+      const graph = mergeGraphData(state.analyzingResult?.graph, action.data.graph);
+      const updatedData = { ...action.data, graph };
       // Update result when: no result loaded, no active analysis (loading cached), or viewing the analysis in progress
       const isViewingAnalysis = !state.result || !state.analyzingRepoName || state.result.repo_name === state.analyzingRepoName;
       return {
