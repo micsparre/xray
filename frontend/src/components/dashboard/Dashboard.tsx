@@ -4,7 +4,7 @@ import {
   PieChart, Pie,
 } from 'recharts';
 import type { AnalysisResult, ModuleStats, ReviewClassification } from '../../types';
-import { riskBadgeColor } from '../../lib/graph-utils';
+import { riskBadgeColor, cleanUsername } from '../../lib/graph-utils';
 
 /* ─── constants ────────────────────────────────────────── */
 
@@ -112,7 +112,7 @@ export function Dashboard({ result }: Props) {
     for (const c of contributors) m.set(c.email, c.name);
     return m;
   }, [contributors]);
-  const displayName = (email: string) => nameByEmail.get(email) ?? email.split('@')[0];
+  const displayName = (email: string) => nameByEmail.get(email) ?? cleanUsername(email);
 
   // ── Computed metrics ──
   const riskDist = useMemo(() => {

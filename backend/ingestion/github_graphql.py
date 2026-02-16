@@ -33,9 +33,36 @@ def _is_bot_login(login: str) -> bool:
     return "[bot]" in login.lower()
 
 
+def _merge_reviews(reviews: list[PRReview]) -> list[PRReview]:
+    """Consolidate multiple review passes from the same reviewer into one.
+
+    GitHub returns a separate review object per pass (e.g. first CHANGES_REQUESTED,
+    then APPROVED). We merge them: concatenate bodies, keep the last state.
+    """
+    by_author: dict[str, PRReview] = {}
+    for r in reviews:
+        if r.author not in by_author:
+            by_author[r.author] = r
+        else:
+            prev = by_author[r.author]
+            combined_body = "\n\n".join(
+                part for part in [prev.body, r.body] if part.strip()
+            )
+            by_author[r.author] = PRReview(
+                author=r.author,
+                state=r.state,  # last state wins (chronological order from API)
+                body=combined_body,
+                is_bot=r.is_bot,
+            )
+    return list(by_author.values())
+
+
 def _parse_node(node: dict) -> PRData:
     """Convert a single GraphQL PR node into a PRData object."""
-    reviews = [
+    author_node = node.get("author")
+    author_login = author_node["login"] if author_node else "ghost"
+
+    reviews = _merge_reviews([
         PRReview(
             author=r["author"]["login"] if r.get("author") else "ghost",
             state=r["state"],
@@ -43,14 +70,12 @@ def _parse_node(node: dict) -> PRData:
             is_bot=_is_bot_typename(r.get("author")),
         )
         for r in (node.get("reviews", {}).get("nodes", []) or [])
-    ]
+        if (r.get("author", {}) or {}).get("login") != author_login
+    ])
     commit_nodes = (node.get("commits") or {}).get("nodes") or []
     author_email = ""
     if commit_nodes:
         author_email = (commit_nodes[0].get("commit", {}).get("author", {}).get("email") or "")
-
-    author_node = node.get("author")
-    author_login = author_node["login"] if author_node else "ghost"
 
     return PRData(
         number=node["number"],
@@ -221,7 +246,9 @@ async def _fetch_prs_rest_fallback(slug: str, months: int) -> list[PRData]:
         if merged and merged < cutoff:
             continue
 
-        reviews = [
+        author = item.get("author", {})
+        author_login = author.get("login", "ghost") if isinstance(author, dict) else "ghost"
+        reviews = _merge_reviews([
             PRReview(
                 author=(r_login := r.get("author", {}).get("login", "ghost") if isinstance(r.get("author"), dict) else "ghost"),
                 state=r.get("state", ""),
@@ -229,9 +256,8 @@ async def _fetch_prs_rest_fallback(slug: str, months: int) -> list[PRData]:
                 is_bot=_is_bot_login(r_login),
             )
             for r in (item.get("reviews", []) or [])
-        ]
-        author = item.get("author", {})
-        author_login = author.get("login", "ghost") if isinstance(author, dict) else "ghost"
+            if (r.get("author", {}) or {}).get("login") != author_login
+        ])
         prs.append(PRData(
             number=item["number"],
             title=item.get("title", ""),

@@ -132,7 +132,7 @@ export function InsightCards({ patternResult }: Props) {
             <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Executive Summary</h3>
           </div>
           <p className="text-sm text-zinc-300 leading-relaxed">
-            {patternResult.executive_summary}
+            {stripEmails(patternResult.executive_summary)}
           </p>
         </div>
       )}
@@ -199,7 +199,7 @@ export function InsightCards({ patternResult }: Props) {
                 >
                   {i + 1}.
                 </span>
-                <span className="leading-relaxed">{rec}</span>
+                <span className="leading-relaxed">{stripEmails(rec)}</span>
               </div>
             ))}
           </div>
@@ -207,6 +207,27 @@ export function InsightCards({ patternResult }: Props) {
       )}
     </div>
   );
+}
+
+/* ─── helpers ─────────────────────────────────────────── */
+
+const EMAIL_RE = /[\w.+-]+@[\w.-]+\.\w+/g;
+
+/** Strip email addresses from a string (removes surrounding parens/plus if left empty) */
+function stripEmails(text: string): string {
+  return text
+    .replace(EMAIL_RE, '')
+    .replace(/\(\s*\+?\s*\)/g, '')        // empty "(  +  )" leftovers
+    .replace(/\(\s*\+\s*/g, '(')           // leading "+ " inside parens
+    .replace(/\s*\+\s*\)/g, ')')           // trailing " +" inside parens
+    .replace(/\(\s*\)/g, '')               // empty parens
+    .replace(/\s{2,}/g, ' ')              // collapse whitespace
+    .trim();
+}
+
+/** Return true if string looks like an email */
+function isEmail(s: string): boolean {
+  return /^[\w.+-]+@[\w.-]+\.\w+$/.test(s);
 }
 
 /* ─── Insight card ─────────────────────────────────────── */
@@ -255,12 +276,12 @@ function InsightCardItem({ insight }: { insight: InsightCard }) {
         </div>
 
         {/* Description */}
-        <p className="text-xs text-zinc-400 leading-relaxed">{insight.description}</p>
+        <p className="text-xs text-zinc-400 leading-relaxed">{stripEmails(insight.description)}</p>
 
         {/* Tags */}
-        {(insight.people.length > 0 || insight.modules.length > 0) && (
+        {(insight.people.filter((p) => !isEmail(p)).length > 0 || insight.modules.length > 0) && (
           <div className="flex flex-wrap gap-1.5 pt-0.5">
-            {insight.people.map((p) => (
+            {insight.people.filter((p) => !isEmail(p)).map((p) => (
               <span
                 key={p}
                 className="text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1"

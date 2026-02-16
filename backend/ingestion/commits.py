@@ -1,11 +1,32 @@
 import asyncio
+import re
 from pathlib import Path
 
 from backend.api.schemas import CommitRecord, FileChange
 from backend.config import is_excluded_file
 
+# Matches git rename notation: prefix/{old => new}/suffix or {old => new}/suffix
+_RENAME_RE = re.compile(r'\{[^}]*\s+=>\s+[^}]*\}')
 
 COMMIT_START = "---XRAY_COMMIT---"
+
+
+def _resolve_rename(path: str) -> str:
+    """Resolve git rename notation to the destination path.
+
+    e.g. 'libs/{sql-babel => query-parser}/index.ts' -> 'libs/query-parser/index.ts'
+         '{old => new}/foo.py' -> 'new/foo.py'
+    """
+    def _replace(m: re.Match) -> str:
+        inner = m.group(0)[1:-1]  # strip { }
+        _, new = inner.split("=>", 1)
+        return new.strip()
+
+    resolved = _RENAME_RE.sub(_replace, path)
+    # Clean up any double slashes from empty segments (e.g. "{ => new}" at start)
+    return re.sub(r'/+', '/', resolved).strip('/')
+
+
 FORMAT = f"{COMMIT_START}%n%H%n%an%n%ae%n%aI%n%s"
 
 
@@ -55,6 +76,7 @@ async def get_commits(repo_path: Path, months: int = 6) -> list[CommitRecord]:
                     deletions = int(del_str) if del_str != "-" else 0
                 except ValueError:
                     continue
+                path = _resolve_rename(path)
                 if is_excluded_file(path):
                     continue
                 files.append(FileChange(additions=additions, deletions=deletions, path=path))

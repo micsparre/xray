@@ -1,5 +1,5 @@
 import type { GraphNode, AnalysisResult, ModuleStats } from '../../types';
-import { riskBadgeColor } from '../../lib/graph-utils';
+import { riskBadgeColor, cleanUsername } from '../../lib/graph-utils';
 
 interface Props {
   node: GraphNode;
@@ -26,7 +26,7 @@ export function DetailPanel({ node, result, onClose }: Props) {
               </span>
             </div>
             <h3 className="text-[15px] font-semibold text-white leading-tight truncate">
-              {node.label}
+              {node.type === 'contributor' ? cleanUsername(node.label) : node.label}
             </h3>
           </div>
           <button
@@ -64,7 +64,7 @@ function ContributorDetail({ node, result }: { node: GraphNode; result: Analysis
     if (mapped && mapped.toLowerCase() === email.toLowerCase()) return true;
     // Fallback: name or email prefix match
     const lc = login.toLowerCase();
-    return lc === node.label.toLowerCase() || lc === email.split('@')[0].toLowerCase();
+    return lc === node.label.toLowerCase() || lc === cleanUsername(email).toLowerCase();
   };
 
   const DEPTH_ORDER: Record<string, number> = { architect: 0, deep: 1, working: 2, surface: 3 };
@@ -192,7 +192,7 @@ function OwnershipSection({ moduleStats }: { moduleStats: ModuleStats }) {
         {entries.map(({ email, pct }) => (
           <div key={email} className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] text-zinc-400 truncate max-w-[140px]">{email.split('@')[0]}</span>
+              <span className="text-[11px] text-zinc-400 truncate max-w-[140px]">{cleanUsername(email)}</span>
               <span className="text-[11px] text-zinc-300 tabular-nums font-medium">{(pct * 100).toFixed(0)}%</span>
             </div>
             <div className="h-1 bg-zinc-800 rounded-full overflow-hidden">

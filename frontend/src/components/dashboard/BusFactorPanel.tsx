@@ -1,5 +1,5 @@
 import type { ModuleStats, ContributorStats } from '../../types';
-import { riskBadgeColor } from '../../lib/graph-utils';
+import { riskBadgeColor, cleanUsername } from '../../lib/graph-utils';
 
 interface Props {
   modules: ModuleStats[];
@@ -19,7 +19,7 @@ export function BusFactorPanel({ modules, contributors }: Props) {
   for (const c of contributors) {
     nameByEmail.set(c.email, c.name);
   }
-  const displayName = (email: string) => nameByEmail.get(email) ?? email.split('@')[0];
+  const displayName = (email: string) => nameByEmail.get(email) ?? cleanUsername(email);
   // Compute max commits for normalization
   const maxCommits = Math.max(1, ...modules.map((m) => m.total_commits));
 

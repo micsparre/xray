@@ -16,6 +16,9 @@ from backend.api.schemas import (
 # Matches GitHub noreply emails: "id+user@users.noreply.github.com" or "user@users.noreply.github.com"
 _NOREPLY_RE = re.compile(r'^(?:\d+\+)?(.+)@users\.noreply\.github\.com$', re.IGNORECASE)
 
+# Strip GitHub numeric ID prefix from names like "2937652+micsparre"
+_GH_ID_PREFIX_RE = re.compile(r'^\d+\+')
+
 # Heuristic bot detection for git commit authors (complements GraphQL __typename)
 _BOT_NAME_PATTERNS = re.compile(r'\[bot\]|github-actions|dependabot|renovate|greenkeeper|semantic-release', re.IGNORECASE)
 
@@ -64,8 +67,8 @@ def build_contributor_stats(
     for c in commits:
         key = resolve(c.author_email)
         if key not in by_author:
-            # Use the original name, but prefer a non-username-style name
-            name = c.author_name
+            # Use the original name, strip GitHub numeric ID prefix (e.g. "2937652+user" → "user")
+            name = _GH_ID_PREFIX_RE.sub('', c.author_name)
             bot = is_bot_contributor(c.author_name, c.author_email) or key in _bot_emails
             by_author[key] = ContributorStats(
                 name=name,

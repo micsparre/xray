@@ -1,5 +1,11 @@
 import type { GraphNode } from '../types';
 
+/** Strip GitHub numeric ID prefix from an email local part: "2937652+user" → "user" */
+export function cleanUsername(emailOrName: string): string {
+  const local = emailOrName.includes('@') ? emailOrName.split('@')[0] : emailOrName;
+  return local.replace(/^\d+\+/, '');
+}
+
 export function nodeColor(node: GraphNode): string {
   return node.color;
 }

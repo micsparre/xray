@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import re
 
 from backend.agents.client import get_client
 from backend.api.schemas import (
@@ -51,7 +52,8 @@ Respond with JSON:
 - Be ACTIONABLE: Each insight should suggest what a team lead could DO about it.
 - Generate 5-10 insights, prioritized by impact.
 - Keep executive_summary under 100 words.
-- Keep each recommendation under 50 words."""
+- Keep each recommendation under 50 words.
+- NEVER include email addresses anywhere in your output (titles, descriptions, people arrays, recommendations, or executive_summary). Use display names or usernames only."""
 
 
 async def detect_patterns(result: AnalysisResult) -> PatternDetectionResult:
@@ -118,6 +120,23 @@ async def detect_patterns(result: AnalysisResult) -> PatternDetectionResult:
 
 def _build_data_summary(result: AnalysisResult) -> str:
     """Build a structured text summary of all analysis data for the AI."""
+
+    # Build email → display name lookup so we can avoid feeding emails to the model
+    email_to_name: dict[str, str] = {}
+    for c in result.contributors:
+        email_to_name[c.email] = c.name or c.email.split("@")[0]
+
+    def _name(value: str) -> str:
+        """Convert an email or noreply address to a display name."""
+        if "@" not in value:
+            return value
+        if value in email_to_name:
+            return email_to_name[value]
+        # GitHub noreply: strip leading numeric ID+ prefix
+        local = value.split("@")[0]
+        local = re.sub(r"^\d+\+", "", local)
+        return local
+
     parts = [
         f"# Repository Analysis: {result.repo_name}",
         f"Period: last {result.analysis_months} months",
@@ -128,7 +147,7 @@ def _build_data_summary(result: AnalysisResult) -> str:
 
     for c in result.contributors[:15]:
         parts.append(
-            f"- {c.name} ({c.email}): {c.total_commits} commits, "
+            f"- {c.name or c.email.split('@')[0]}: {c.total_commits} commits, "
             f"+{c.total_additions}/-{c.total_deletions} lines, "
             f"active in: {', '.join(c.modules[:5])}"
         )
@@ -139,7 +158,7 @@ def _build_data_summary(result: AnalysisResult) -> str:
             m.blame_ownership.items(), key=lambda x: -x[1]
         )[:3]
         ownership_str = ", ".join(
-            f"{email}: {pct:.0%}" for email, pct in top_owners
+            f"{_name(email)}: {pct:.0%}" for email, pct in top_owners
         )
         parts.append(
             f"- **{m.module}** (bus_factor={m.bus_factor:.2f}): "
@@ -150,7 +169,7 @@ def _build_data_summary(result: AnalysisResult) -> str:
         parts.append("\n## AI Expertise Classifications")
         for ec in result.expertise_classifications:
             parts.append(
-                f"- PR#{ec.pr_number} by {ec.author}: {ec.knowledge_depth} "
+                f"- PR#{ec.pr_number} by {_name(ec.author)}: {ec.knowledge_depth} "
                 f"({ec.change_type}, {ec.complexity}) — {ec.summary}"
             )
 
@@ -158,7 +177,7 @@ def _build_data_summary(result: AnalysisResult) -> str:
         parts.append("\n## Review Quality Assessments")
         for rc in result.review_classifications:
             parts.append(
-                f"- PR#{rc.pr_number} reviewer {rc.reviewer}: {rc.quality} "
+                f"- PR#{rc.pr_number} reviewer {_name(rc.reviewer)}: {rc.quality} "
                 f"(knowledge_transfer={rc.knowledge_transfer}) — {rc.summary}"
             )
 

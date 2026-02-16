@@ -2,7 +2,7 @@ import { useCallback, useRef, useEffect, useState, useMemo } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { forceX, forceY, forceCollide } from 'd3-force';
 import type { GraphData, GraphNode } from '../../types';
-import { nodeGlowColor, depthColor, depthGlowColor, depthWidthBonus, depthBaseAlpha } from '../../lib/graph-utils';
+import { nodeGlowColor, depthColor, depthGlowColor, depthWidthBonus, depthBaseAlpha, cleanUsername } from '../../lib/graph-utils';
 import { GraphSearchBar, type NodeTypeFilter, type RiskLevel } from './GraphSearchBar';
 
 interface Props {
@@ -411,7 +411,7 @@ export function KnowledgeGraph({ data, selectedNode, onNodeClick, width, height 
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
 
-        const labelText = n.label;
+        const labelText = n.type === 'contributor' ? cleanUsername(n.label) : n.label;
         const labelY = node.y! + drawSize + 4 / zoom;
 
         // Text shadow for readability against dark background
