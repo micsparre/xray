@@ -117,6 +117,8 @@ async def fetch_prs(repo_url: str, months: int = 6) -> list[PRData]:
     cursor: str | None = None
     max_pages = 10  # Safety cap: 10 pages × 100 = 1000 PRs max
 
+    max_retries = 3
+
     for _ in range(max_pages):
         args = [
             "gh", "api", "graphql",
@@ -128,14 +130,31 @@ async def fetch_prs(repo_url: str, months: int = 6) -> list[PRData]:
         if cursor:
             args += ["-f", f"cursor={cursor}"]
 
-        proc = await asyncio.create_subprocess_exec(
-            *args,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
-        stdout, stderr = await proc.communicate()
+        stdout = b""
+        stderr = b""
+        returncode = 1
+        for attempt in range(max_retries):
+            proc = await asyncio.create_subprocess_exec(
+                *args,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            stdout, stderr = await proc.communicate()
+            returncode = proc.returncode
 
-        if proc.returncode != 0:
+            if returncode == 0:
+                break
+
+            err = stderr.decode()
+            is_transient = "502" in err or "503" in err or "timeout" in err.lower()
+            if not is_transient:
+                break
+
+            delay = 2 ** attempt
+            logger.warning(f"GraphQL request failed (attempt {attempt + 1}/{max_retries}): {err.strip()} — retrying in {delay}s")
+            await asyncio.sleep(delay)
+
+        if returncode != 0:
             err = stderr.decode()
             if "auth" in err.lower() or "login" in err.lower():
                 return await _fetch_prs_rest_fallback(slug, months)
