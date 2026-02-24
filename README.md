@@ -8,8 +8,6 @@ The key insight: **Claude reads actual code diffs** to understand expertise dept
 
 ![xray demo](docs/demo.png)
 
-**[Watch the demo video](https://youtu.be/ddSjYo4Gc2A)**
-
 ## How It Works
 
 1. **Ingest** — Clones the repo and fetches git history, blame data, and PR metadata via `gh` CLI
