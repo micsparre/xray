@@ -10,11 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Link env file
-        run: ln -sf ~/envfiles/xray.env .env
-
       - name: Build and deploy
         run: |
+          export APP_ENV_FILE="$HOME/envfiles/xray.env"
+          test -f "$APP_ENV_FILE" || { echo "Missing production env file: $APP_ENV_FILE" >&2; exit 1; }
           docker compose -f docker-compose.prod.yml build
           docker compose -f docker-compose.prod.yml up -d
 
