@@ -25,7 +25,7 @@ RUN uv sync --frozen --no-dev
 
 # Copy application code
 COPY backend/ backend/
-COPY cached_results/ cached_results/
+RUN mkdir -p /app/cached_results
 
 EXPOSE 8000
 
