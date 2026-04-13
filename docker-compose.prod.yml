@@ -2,7 +2,7 @@ services:
   xray-backend:
     build: .
     container_name: xray-backend
-    env_file: .env
+    env_file: ${APP_ENV_FILE:-.env}
     volumes:
       - clone-data:/tmp/xray-repos
       - cache-data:/app/cached_results
