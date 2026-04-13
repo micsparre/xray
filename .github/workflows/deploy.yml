@@ -7,13 +7,54 @@ on:
 jobs:
   deploy:
     runs-on: [self-hosted, mac-mini, prod, xray]
+    env:
+      GITHUB_SECRETS_JSON: ${{ toJson(secrets) }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Build and deploy
         run: |
-          export APP_ENV_FILE="$HOME/envfiles/xray.env"
-          test -f "$APP_ENV_FILE" || { echo "Missing production env file: $APP_ENV_FILE" >&2; exit 1; }
+          export APP_ENV_FILE
+          APP_ENV_FILE="$(mktemp "${RUNNER_TEMP:-/tmp}/xray.env.XXXXXX")"
+          trap 'rm -f "$APP_ENV_FILE"' EXIT
+
+          cp config/production.env "$APP_ENV_FILE"
+
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+
+          skip = {
+              "DOPPLER_CONFIG",
+              "DOPPLER_ENVIRONMENT",
+              "DOPPLER_PROJECT",
+              "DOPPLER_TOKEN",
+              "GITHUB_TOKEN",
+              "github_token",
+          }
+
+          output_path = os.environ["APP_ENV_FILE"]
+          secrets = json.loads(os.environ["GITHUB_SECRETS_JSON"])
+
+          with open(output_path, "a", encoding="utf-8") as fh:
+              if os.path.getsize(output_path) > 0:
+                  fh.write("\n")
+
+              for key in sorted(secrets):
+                  value = secrets[key]
+                  if key in skip or not value:
+                      continue
+                  if "\n" in value or "\r" in value:
+                      print(
+                          f"Secret {key} contains a newline and cannot be written to a Docker env file safely.",
+                          file=sys.stderr,
+                      )
+                      sys.exit(1)
+                  fh.write(f"{key}={value}\n")
+          PY
+
+          test -f "$APP_ENV_FILE" || { echo "Missing runtime env file: $APP_ENV_FILE" >&2; exit 1; }
           docker compose -f docker-compose.prod.yml build
           docker compose -f docker-compose.prod.yml up -d
 
