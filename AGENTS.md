@@ -17,10 +17,10 @@
 
 ## Secrets / Env
 
-- Production env file lives outside the repo at `~/envfiles/xray.env`
-- Deploy workflow passes that path via `APP_ENV_FILE`
+- Production deploys build a transient env file from committed `config/production.env` plus GitHub Actions secrets synced from Doppler
+- Deploy workflow passes the transient path via `APP_ENV_FILE`
 - `docker-compose.prod.yml` defaults to `.env` only when `APP_ENV_FILE` is not set
-- env handling for this repo has shown drift; treat the external env file as the intended production source of truth
+- env handling for this repo has shown drift; treat Doppler as the intended production source of truth for secrets
 
 ## Operational Notes
 
