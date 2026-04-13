@@ -1,0 +1,25 @@
+name: Deploy to Mac Mini
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, mac-mini, prod, xray]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Link env file
+        run: ln -sf ~/envfiles/xray.env .env
+
+      - name: Build and deploy
+        run: |
+          docker compose -f docker-compose.prod.yml build
+          docker compose -f docker-compose.prod.yml up -d
+
+      - name: Reload proxy
+        run: docker exec nginx_proxy nginx -s reload
+
+      - name: Clean up old images
+        run: docker image prune -f

@@ -1,0 +1,36 @@
+services:
+  xray-backend:
+    build: .
+    container_name: xray-backend
+    env_file: .env
+    volumes:
+      - clone-data:/tmp/xray-repos
+      - cache-data:/app/cached_results
+    restart: unless-stopped
+    networks:
+      - shared_network
+
+  xray-frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: xray-frontend
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf
+    restart: unless-stopped
+    networks:
+      - shared_network
+    depends_on:
+      - xray-backend
+
+networks:
+  shared_network:
+    external: true
+
+volumes:
+  clone-data:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: "size=4g"
+  cache-data:
