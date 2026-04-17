@@ -1,5 +1,16 @@
 # Xray Agent Notes
 
+## Git Start Rule
+
+Before starting a new task in this repo:
+
+1. check the current branch
+2. inspect the staging area and working tree
+3. notify the user if there are unstaged, staged, or other uncommitted changes
+4. if the repo is clean and the task should begin from main, switch to local `main`, ensure it tracks `origin/main`, and sync to the latest remote state before making changes
+
+Do not blindly switch branches or pull if there is existing uncommitted work.
+
 ## Deployment
 
 - Production runs on the Mac mini under the `infra` account
